@@ -20,5 +20,9 @@ namespace Movies.Models
         // The Enum Will be mapped as a string
         [Column(TypeName = "nvarchar(20)")]
         public MovieQuality Quality { get; set; }
+
+        [ForeignKey("Director")]
+        public int DirectorID { get; set; }
+        public Director Director { get; set; }
     }
 }

@@ -11,7 +11,7 @@ namespace Movies.Models
         public int Rate { get; set; }
 
         [ForeignKey("User")]
-        public int UserID { get; set; }
+        public string UserID { get; set; }
         public AppUser User { get; set; }
 
 
