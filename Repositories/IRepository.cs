@@ -3,7 +3,7 @@ namespace TestingMVC.Repo
 {
     public interface IRepository<T> where T : class
     {
-        /// <summary>///////////////////////////
+        /// <summary>//////////////////////////////
         /// </summary>
         /// <returns></returns>
         public List<T> GetAll();
