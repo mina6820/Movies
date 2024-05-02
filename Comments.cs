@@ -6,3 +6,9 @@
 
 //// Retrieve user's ID
 //string userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+
+//Marwa Notes
+//GetAllSeriesForDirector
+//
+//MakeSearch

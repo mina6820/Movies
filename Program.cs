@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Movies.Authentication;
+using Movies.Repositories.SeriesRepo;
+using Movies.Repositories.SeasonsRepo;
 
 namespace Movies
 {
@@ -40,6 +42,8 @@ namespace Movies
             builder.Services.AddScoped<IActorRepository, ActorRepository>();
             builder.Services.AddScoped<IDirectorRepository, DirectorRepository>();
             builder.Services.AddScoped<IFavMovieRepository, FavMovieRepository>();
+            builder.Services.AddScoped<ISeriesRepository, SeriesRepository>();
+            builder.Services.AddScoped<ISeasonsRepo, SeasonsRepo>();
 
 
 
