@@ -1,6 +1,10 @@
 
+using Instagram_Clone.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Movies.Models;
+using Movies.Repositories.CategoryRepo;
+using Movies.Repositories.MovieRepo;
+using TestingMVC.Repo;
 using Movies.Repositories.ActroRepo;
 using Movies.Repositories.DirectorRepo;
 using Movies.Repositories.FavMovieRepo;
@@ -24,6 +28,9 @@ namespace Movies
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("cs"));
             });
+
+            builder.Services.AddScoped<ICategoryRepository , CategoryRepository>();
+            builder.Services.AddScoped<IMovieRepository , MovieRepository>();
 
             builder.Services.AddScoped<IActorRepository, ActorRepository>();
             builder.Services.AddScoped<IFavMovieRepository, FavMovieRepository>();
