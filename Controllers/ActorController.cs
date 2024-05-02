@@ -17,7 +17,7 @@ namespace Movies.Controllers
             ActorRepository = _ActorRepository;
         }
 
-
+        
         [HttpPost]
         public ActionResult<dynamic> AddActor(Actor actor)
         {
@@ -26,6 +26,7 @@ namespace Movies.Controllers
             return new GeneralResponse() { IsSuccess = true, Data = actor };
             //return CreatedAtAction(nameof(GetActorById), new { id = actor.ID }, actor);
         }
+
 
         [HttpGet]
         public IActionResult GetAllActors()

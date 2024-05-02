@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Movies.DTOs;
 using Movies.Models;
 using Movies.Repositories.CategoryRepo;
 using TestingMVC.Repo;
@@ -19,64 +20,71 @@ namespace Movies.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddCategory(Category category)
+        public ActionResult<GeneralResponse> AddCategory(CategoryDTO categoryDto)
         {
+            
             if(ModelState.IsValid)
             {
+                Category category = new Category() { Name = categoryDto.Name } ;
                 categoryRepository.Insert(category);
                 categoryRepository.Save();
-                return Ok(category);
+               
+               return new GeneralResponse() { IsSuccess = true , Data = category};
             }
-            return BadRequest("invalid category");
+            return new GeneralResponse() { IsSuccess= false , Data = "Invalid Name"};
         }
 
         [HttpGet]
-        public IActionResult GetAllCategories()
+        public ActionResult<GeneralResponse> GetAllCategories()
         {
-            return Ok(categoryRepository.GetAll());
+            List<Category>? categories = categoryRepository.GetAll();
+            if (categories == null)
+                return new GeneralResponse() { IsSuccess = false, Data = "No Categories yet" };
+            return new GeneralResponse() { IsSuccess = true ,Data = categories};
         }
 
         [HttpGet("{id:int}")]
-        public IActionResult GetCategoryById(int id)
+        public ActionResult<GeneralResponse> GetCategoryById(int id)
         {
             Category category = categoryRepository.GetCategoryById(id);
             if(category == null)
-                return NotFound();
+                return new GeneralResponse() { IsSuccess = false , Data = $"No Category With ID : {id}"};
 
-            return Ok(category);
+            return new GeneralResponse() { IsSuccess = true ,Data = category};
         }
 
         [HttpGet("{name:alpha}")]
-        public IActionResult GetCategoryByName(string name)
+        public ActionResult<GeneralResponse> GetCategoryByName(string name)
         {
             List<Category>? categories = categoryRepository.GetCategoryByName(name);
-            if(categories == null)
-                return NotFound();
-            return Ok(categories);
+            if (categories == null)
+                return new GeneralResponse() { IsSuccess = false, Data = "No Category Found" };
+
+            return new GeneralResponse() { IsSuccess = true, Data = categories};
         }
 
         [HttpPut("{id:int}")]
-        public IActionResult EditCategory(int id ,  Category category)
+        public ActionResult<GeneralResponse> EditCategory(int id ,  CategoryDTO category)
         {
             Category categoryfromDb = categoryRepository.GetCategoryById(id);
-            if (categoryfromDb == null || categoryfromDb.Id != category.Id)
-                return BadRequest("not found or the id in the category object is not equal the id from the object database");
+            if (categoryfromDb == null)
+                return new GeneralResponse() { IsSuccess = false, Data = $"No Category With ID : {id}" };
 
             categoryfromDb.Name = category.Name;
             categoryRepository.Save();
-            return Ok(category);
+            return new GeneralResponse() { IsSuccess = true, Data = categoryfromDb};
         }
 
         [HttpDelete]
-        public IActionResult DeleteCategory(int id)
+        public ActionResult<GeneralResponse> DeleteCategory(int id)
         {
             Category? category = categoryRepository.GetCategoryById(id);
             if(category == null)
-                return NotFound();
-            
+                return new GeneralResponse() { IsSuccess = false, Data = $"No Category With ID : {id}" };
+
             category.IsDeleted = true;
             categoryRepository.Save();
-            return NoContent();
+            return new GeneralResponse() { IsSuccess = true, Data = "Deleted Successfully" };
         }
 
     }

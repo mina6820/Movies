@@ -17,6 +17,11 @@ namespace Movies.Repositories.CategoryRepo
             return context.Categories.FirstOrDefault(c => c.Id == id && c.IsDeleted == false);
         }
 
+        public List<Category> GetAll()
+        {
+            return context.Categories.Where(c => c.IsDeleted == false).ToList();
+        }
+
         public List<Category>? GetCategoryByName(string name)
         {
             return context.Categories.Where(c => c.Name.Contains(name) && c.IsDeleted == false).ToList();
