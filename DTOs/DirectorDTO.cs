@@ -9,7 +9,7 @@ namespace Movies.DTOs
         public string? Image { get; set; }
         public string? Overview { get; set; }
         public List<MoviesDirectorDTO> Movies { get; set; } = new List<MoviesDirectorDTO>();
-        public List<string> Series { get; set; } = new List<string>();
+        public List<SeriesDirectorDTO> Series { get; set; } = new List<SeriesDirectorDTO>();
     }
 
 }
