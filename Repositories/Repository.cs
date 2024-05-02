@@ -12,10 +12,11 @@ namespace Instagram_Clone.Repositories
         }
         public void Delete(string id)
         {
-            T t = GetById(id);
+            T t = GetById(id);        
             Update(t);
         }
 
+       
         public List<T> GetAll()//(string include=null)
         {
             
@@ -33,6 +34,7 @@ namespace Instagram_Clone.Repositories
             // return context.Courses.Include(c => c.Department).FirstOrDefault(c => c.Id == id);
         }
 
+       
         public void Insert(T obj)
         {
             context.Add(obj);

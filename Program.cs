@@ -1,6 +1,10 @@
 
+using Instagram_Clone.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Movies.Models;
+using Movies.Repositories.CategoryRepo;
+using Movies.Repositories.MovieRepo;
+using TestingMVC.Repo;
 
 namespace Movies
 {
@@ -21,6 +25,9 @@ namespace Movies
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("cs"));
             });
+
+            builder.Services.AddScoped<ICategoryRepository , CategoryRepository>();
+            builder.Services.AddScoped<IMovieRepository , MovieRepository>();
 
             var app = builder.Build();
 
