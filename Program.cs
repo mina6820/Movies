@@ -8,6 +8,11 @@ using TestingMVC.Repo;
 using Movies.Repositories.ActroRepo;
 using Movies.Repositories.DirectorRepo;
 using Movies.Repositories.FavMovieRepo;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Movies.Authentication;
 
 namespace Movies
 {
@@ -36,7 +41,33 @@ namespace Movies
             builder.Services.AddScoped<IDirectorRepository, DirectorRepository>();
             builder.Services.AddScoped<IFavMovieRepository, FavMovieRepository>();
 
-            //builder.Services.AddScoped<IDirectorRepository, DirectorRepository>();
+
+
+
+            builder.Services.AddIdentity<AppUser, IdentityRole>()
+    .AddEntityFrameworkStores<Context>();
+
+            builder.Services.AddAuthentication(options => {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options => {
+                options.SaveToken = true;
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = builder.Configuration["JWT:ValidIss"],
+                    ValidateAudience = true,
+                    ValidAudience = builder.Configuration["JWT:ValidAud"],
+                    IssuerSigningKey =
+                    new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecritKey"]))
+                };
+            });
+
+
+            /////////////////////////// Builder /////////////////////////////////////////////
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
