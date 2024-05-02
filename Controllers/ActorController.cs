@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
 using Movies.DTOs;
 using Movies.Models;
 using Movies.Repositories.ActroRepo;
+using System.IO;
 
 namespace Movies.Controllers
 {
@@ -47,6 +49,7 @@ namespace Movies.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public ActionResult<dynamic> GetAllActors()
         {
             List<Actor> actors = ActorRepository.GetAll();
@@ -117,7 +120,7 @@ namespace Movies.Controllers
             List<Actor> actors = ActorRepository.SearchActor(name);
             List<ActorDTO> actorDTOs = new List<ActorDTO>();
 
-            if (actors == null)
+            if (actors == null || actors.Count == 0)
             {
                 return new GeneralResponse()
                 {

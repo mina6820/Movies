@@ -10,11 +10,9 @@ namespace Movies.Models
         public int? CreatedYear { get; set; }
         public string? PosterImage { get; set; }
         public int LengthMinutes { get; set; }
-        public bool IsDeleted { get; set; }
+        public bool IsDeleted { get; set; } = false;
         public int Revenue { get; set; }
-
-        public List<Season> Seasons { get; set; }
-
+        public List<Season>? Seasons { get; set; }
         // Enum For (Anime, Arabic, Forigen, Assian...)
         [Column(TypeName = "nvarchar(20)")]
         public FilmSection FilmSection { get; set; }

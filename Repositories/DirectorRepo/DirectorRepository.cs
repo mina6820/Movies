@@ -1,4 +1,5 @@
 ﻿using Instagram_Clone.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Movies.Models;
 
 namespace Movies.Repositories.DirectorRepo
@@ -10,5 +11,34 @@ namespace Movies.Repositories.DirectorRepo
         {
             context = _context;
         }
+        public Director GetDirectorById(int id)
+        {
+            return context.Directors
+                .Include(d => d.Movies)
+                .Include(d=>d.Series)
+                .FirstOrDefault(d => d.Id == id);
+        }
+
+        public List<Director> GetAllDirectors()
+        {
+            return context.Directors
+               .Include(d => d.Movies)
+               .Include(d => d.Series)
+               .ToList();
+        }
+
+        public List<Director> SearchDirector(string name)
+        {
+            string searchNameLower = name.ToLower();
+
+            List<Director> directors = context.Directors
+                .Where(d => d.Name.ToLower().Contains(searchNameLower))
+                .Include(d=>d.Movies)
+                .Include(d=>d.Series)
+                .ToList();
+            return directors;
+            
+        }
+
     }
 }
