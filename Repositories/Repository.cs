@@ -12,7 +12,7 @@ namespace Instagram_Clone.Repositories
         }
         public void Delete(int id)
         {
-            T t = GetById(id);
+            T t = GetById(id);        
             Update(t);
         }
 
@@ -28,6 +28,7 @@ namespace Instagram_Clone.Repositories
             return context.Set<T>().Find(id);
         }
 
+       
         public void Insert(T obj)
         {
             context.Add(obj);
