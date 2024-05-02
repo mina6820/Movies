@@ -14,5 +14,7 @@ namespace Movies.Models
         [ForeignKey("User")]
         public string UserID { get; set; }
         public AppUser User { get; set; }
+
+        public bool IsDeleted { get; set; } = false;
     }
 }

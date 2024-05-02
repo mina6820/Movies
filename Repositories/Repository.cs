@@ -10,27 +10,22 @@ namespace Instagram_Clone.Repositories
         {
             context = _context;
         }
-        public void Delete(string id)
+        public void Delete(int id)
         {
             T t = GetById(id);
             Update(t);
         }
 
-        public List<T> GetAll()//(string include=null)
+        public List<T> GetAll()
         {
             
             return context.Set<T>().ToList();
-           
-            //return context.Set<T>().Include(include).ToList();
-            //return context.Courses.Where(c => c.isDeleted == false).Include(c => c.Department).ToList();
-
-
+        
         }
 
-        public T GetById(string id)
+        public T GetById(int id)
         {
             return context.Set<T>().Find(id);
-            // return context.Courses.Include(c => c.Department).FirstOrDefault(c => c.Id == id);
         }
 
         public void Insert(T obj)
