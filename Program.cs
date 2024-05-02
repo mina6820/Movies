@@ -25,7 +25,7 @@ namespace Movies
             });
 
             builder.Services.AddScoped<IActorRepository, ActorRepository>();
-            //builder.Services.AddScoped<IDirectorRepository, DirectorRepository>();
+            builder.Services.AddScoped<IDirectorRepository, DirectorRepository>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

@@ -12,24 +12,14 @@ namespace Movies.Repositories.ActroRepo
             context = _context;
         }
 
-        //public Actor GetActorById(int id)
-        //{
-        //    return context.Actors.Where(a=>a.IsDeleted==false).FirstOrDefault(a => a.ID == id);
-        //}
-
-        //public void DeleteActor(int id)
-        //{
-        //    Actor actor = GetActorById(id);
-        //    actor.IsDeleted = true;
-        //    context.SaveChanges();
-
-        //}
-        public Actor GetActorByName(string name)
+        public List<Actor> SearchActor(string name)
         {
+            string searchNameLower = name.ToLower();
 
-            Actor actor = context.Actors.Where(a=>a.IsDeleted==false).FirstOrDefault(a => a.Name == name);
-            return actor;
+            List<Actor> actors = context.Actors.Where(a => a.Name.ToLower().Contains(searchNameLower)).ToList();
+            return actors;
         }
+
 
     }
 }

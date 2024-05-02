@@ -3,7 +3,7 @@ using TestingMVC.Repo;
 
 namespace Movies.Repositories.DirectorRepo
 {
-    //public interface IDirectorRepository:IRepository<Director>
-    //{
-    //}
+    public interface IDirectorRepository : IRepository<Director>
+    {
+    }
 }
