@@ -5,6 +5,8 @@ using Movies.Models;
 using Movies.Repositories.CategoryRepo;
 using Movies.Repositories.MovieRepo;
 using TestingMVC.Repo;
+using Movies.Repositories.ActroRepo;
+using Movies.Repositories.DirectorRepo;
 
 namespace Movies
 {
@@ -20,7 +22,7 @@ namespace Movies
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-
+         
             builder.Services.AddDbContext<Context>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("cs"));
@@ -29,6 +31,8 @@ namespace Movies
             builder.Services.AddScoped<ICategoryRepository , CategoryRepository>();
             builder.Services.AddScoped<IMovieRepository , MovieRepository>();
 
+            builder.Services.AddScoped<IActorRepository, ActorRepository>();
+            //builder.Services.AddScoped<IDirectorRepository, DirectorRepository>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
