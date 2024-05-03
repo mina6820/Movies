@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
 using Movies.DTOs;
@@ -47,6 +48,7 @@ namespace Movies.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public ActionResult<dynamic> GetAllActors()
         {
             List<Actor> actors = ActorRepository.GetAll();
