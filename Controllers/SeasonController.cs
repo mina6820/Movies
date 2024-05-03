@@ -104,76 +104,35 @@ namespace Movies.Controllers
             }
         }
 
-        //[HttpPut("{id:int}")]
-        //public ActionResult<dynamic> EditSeason(int Id,SeasonsDTO seasonDTO)
-        //{
-        //    Season season = seasonsRepo.GetById(Id);
-        //    if(season == null)
-        //    {
-        //        return new GeneralResponse()
-        //        {
-        //            IsSuccess = false,
-        //            Data = "Season Not Found...!"
-        //        };
-        //    }
-        //    else
-        //    {
-
-        //       season.Name = seasonDTO.Name;
-        //       season.NumOfEpisodes= seasonDTO.NumOfEpisodes;
-        //       season.SeriesID= seasonDTO.SeriesID;
-        //        seasonsRepo.Update(season);
-        //        seasonsRepo.Save();
-        //        return new GeneralResponse() { IsSuccess = true, Data = seasonDTO };
-
-        //    }
-        //}
+       
 
 
 
         [HttpPut("{id:int}")]
            public ActionResult<dynamic> edit(int id , SeasonsDTO seasonsDTO) {
-            if (seasonsDTO == null)
+            Season season=seasonsRepo.GetById(id);
+            if (season == null)
             { return new GeneralResponse() { IsSuccess=false, Data="Not found" }; }
             else
             {
-                Season season = new Season() {
-                    Name = seasonsDTO.Name,
-                    NumOfEpisodes = seasonsDTO.NumOfEpisodes,
-                    SeriesID = seasonsDTO.SeriesID,
-                };
+                season.Name = seasonsDTO.Name;
+                season.NumOfEpisodes = seasonsDTO.NumOfEpisodes;
+                season.SeriesID = seasonsDTO.SeriesID;
 
                 seasonsRepo.Update(season);
                 seasonsRepo.Save();
-                return new GeneralResponse() { 
-                    Data = seasonsDTO,
-                    IsSuccess = true    
+
+                return new GeneralResponse()
+                {
+                    IsSuccess = true,
+                    Data = season
                 };
             }
         
         }
 
 
-        //[HttpDelete("{id:int}")]
-        //public ActionResult<dynamic> DeleteSeason(int Id) 
-        //{ 
-        //    Season season=seasonsRepo.GetById(Id);
-        //    if (season == null)
-        //    {
-        //        return new GeneralResponse()
-        //        {
-        //            IsSuccess = false,
-        //            Data = "Season Not Found...!"
-        //        };
-        //    }
-        //    else
-        //    {
-        //        season.IsDeleted = true;
-        //        seasonsRepo.Delete(Id);
-        //        seasonsRepo.Save();
-        //        return new GeneralResponse() { IsSuccess = true, Data = season };
-        //    }
-        //}
+        
 
         [HttpDelete("{id:int}")]
         public ActionResult<dynamic> Delete(int id)

@@ -7,6 +7,7 @@ using Movies.Repositories.DirectorRepo;
 using Movies.Repositories.SeasonsRepo;
 using Movies.Repositories.SeriesRepo;
 using System.Diagnostics.Eventing.Reader;
+using System.IO;
 namespace Movies.Controllers
 {
     [Route("api/[controller]")]
@@ -112,7 +113,59 @@ namespace Movies.Controllers
                 };
             }
         }
+        [HttpDelete("{id:int}")]
+        public ActionResult<dynamic> DeleteSeries(int id)
+        {
+            Series series = _seriesRepository.GetById(id);
+            if (series == null)
+            {
+                return new GeneralResponse()
+                {
+                    IsSuccess = false,
+                    Data = "Series Not Found"
+                };
+            }
+            else
+            {
+                series.IsDeleted = true;
+                _seriesRepository.Update(series);
+                _seriesRepository.Save();
+                return new GeneralResponse() { IsSuccess = true, Data = "Series Deleted Successfully" };
+            }
+        }
 
+        [HttpPut("{id:int}")]
+        public ActionResult<dynamic> EditSeries(int id, SeriesDTO seriesDTO)
+        {
+            Series series = _seriesRepository.GetById(id);
+            if (series == null)
+            {
+                return new GeneralResponse()
+                {
+                    IsSuccess = false,
+                    Data = "Series Not Found"
+                };
+            }
+            else
+            {
+                series.Title = seriesDTO.Title;
+                series.CreatedYear = seriesDTO.CreatedYear;
+                series.Description = seriesDTO.Description;
+                series.PosterImage = seriesDTO.PosterImage;
+                series.DirectorID = seriesDTO.DirectorID;
+                series.Revenue = seriesDTO.Revenue;
+                series.LengthMinutes = seriesDTO.LengthMinutes;
+
+                _seriesRepository.Update(series);
+                _seriesRepository.Save();
+
+                return new GeneralResponse()
+                {
+                    IsSuccess = true,
+                    Data = series
+                };
+            }
+        }
 
     }
 }
