@@ -34,7 +34,6 @@ namespace Movies.Models
             modelBuilder.Entity<FavouriteMovie>().HasQueryFilter(e => !e.IsDeleted);
             modelBuilder.Entity<FavouriteSeries>().HasQueryFilter(e => !e.IsDeleted);
 
-
             modelBuilder.Entity<Director>().HasQueryFilter(e=>!e.IsDeleted);
         }
     }
