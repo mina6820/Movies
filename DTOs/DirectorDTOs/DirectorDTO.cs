@@ -1,5 +1,5 @@
 ﻿using Movies.Models;
-namespace Movies.DTOs
+namespace Movies.DTOs.DirectorDTOs
 {
     public class DirectorDTO
     {
@@ -8,8 +8,8 @@ namespace Movies.DTOs
         public string? Age { get; set; }
         public string? Image { get; set; }
         public string? Overview { get; set; }
-        //public List<MoviesDirectorDTO> Movies { get; set; } = new List<MoviesDirectorDTO>();
-        //public List<SeriesDirectorDTO> Series { get; set; } = new List<SeriesDirectorDTO>();
+        public List<MoviesDirectorDTO>? Movies { get; set; } = new List<MoviesDirectorDTO>();
+        public List<SeriesDirectorDTO>? Series { get; set; } = new List<SeriesDirectorDTO>();
     }
 
 }
