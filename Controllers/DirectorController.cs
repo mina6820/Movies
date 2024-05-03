@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Movies.DTOs;
 
+using Movies.DTOs.DirectorDTOs;
 using Movies.Models;
 using Movies.Repositories.ActroRepo;
 using Movies.Repositories.DirectorRepo;
@@ -14,6 +15,7 @@ namespace Movies.Controllers
     public class DirectorController : ControllerBase
     {
         IDirectorRepository DirectorRepository;
+
         public DirectorController(IDirectorRepository _DirectorRepository)
         {
             DirectorRepository = _DirectorRepository;
@@ -21,52 +23,39 @@ namespace Movies.Controllers
 
 
         [HttpPost]
-        public ActionResult<dynamic> AddDirector(DirectorDTO directorDTO)
+        public ActionResult<dynamic> AddDirector(DirectorDTOForAddandEdit directorDTOForAddandEdit)
         {
             if (ModelState.IsValid)
             {
                 Director director  = new Director()
                 {
-                    Age = directorDTO.Age,
-                    Id = directorDTO.Id,
-                    Image = directorDTO.Image,
-                    Name = directorDTO.Name,
-                    Overview = directorDTO.Overview,
+                    Age = directorDTOForAddandEdit.Age,
+                    //Id = directorDTOForAddandEdit.Id,
+                    Image = directorDTOForAddandEdit.Image,
+                    Name = directorDTOForAddandEdit.Name,
+                    Overview = directorDTOForAddandEdit.Overview,
                     
                 };
 
-                director.Movies = directorDTO.Movies.Select(m => new Movie()
-                {
-                    Title = m.Title,
-                    CreatedYear = m.CreatedYear,
-                    Description = m.Description,
-                    FilmSection = m.FilmSection,
-                    LengthMinutes = m.LengthMinutes,
-                    PosterImage = m.PosterImage,
-                    Quality = m.Quality,
-                    Revenue = m.Revenue,
-                    DirectorID = m.DirectorId
+                //director.Movies = directorDTO.Movies.Select(m => new Movie()
+                //{
+                //    Title = m.Title,
+                //    Id= m.Id
+                    
                    
-                }).ToList();
+                //}).ToList();
 
-                director.Series = directorDTO.Series.Select(s => new Series()
-                {
-                    Title = s.Title,
-                    CreatedYear = s.CreatedYear,
-                    Description = s.Description,
-                    FilmSection = s.FilmSection,
-                    LengthMinutes = s.LengthMinutes,
-                    PosterImage = s.PosterImage,
-                    Quality = s.Quality,
-                    Revenue = s.Revenue,
-                    DirectorID = s.DirectorID
+                //director.Series = directorDTO.Series.Select(s => new Series()
+                //{
+                //    Title = s.Title,
+                //    Id = s.Id
 
-                }).ToList();
+                //}).ToList();
 
 
                 DirectorRepository.Insert(director);
                 DirectorRepository.Save();
-                return new GeneralResponse() { IsSuccess = true, Data = director };
+                return new GeneralResponse() { IsSuccess = true, Data = directorDTOForAddandEdit };
             }
             else
             {
@@ -104,40 +93,67 @@ namespace Movies.Controllers
                 Movies = director.Movies.Select(m => new MoviesDirectorDTO
                 {
                     Title = m.Title,
-                    CreatedYear = m.CreatedYear,
-                    Description = m.Description,
-                    FilmSection = m.FilmSection,
-                    Id = m.Id,
-                    LengthMinutes = m.LengthMinutes,
-                    PosterImage = m.PosterImage,
-                    Quality = m.Quality,
-                    Revenue = m.Revenue,
-                    DirectorId = m.Director.Id
+                    Id = m.Id
                 }).ToList(),
 
                 Series = director.Series.Select(s => new SeriesDirectorDTO
                 {
                     Id = s.Id,
-                    CreatedYear = s.CreatedYear,
-                    Title=s.Title,
-                    Description = s.Description,
-                    Revenue = s.Revenue,
-                    FilmSection = s.FilmSection,
-                    LengthMinutes = s.LengthMinutes,
-                    PosterImage = s.PosterImage,
-                    Quality= s.Quality,
-                    DirectorID = s.Director.Id
-                   
+                    Title = s.Title
+
                 }).ToList()
 
             };
             return new GeneralResponse() { IsSuccess = true, Data = directorDTO }; 
         }
 
+        [HttpPut]
+        [Route("{id}")]
+        public ActionResult<dynamic> EditDirector(int id, DirectorDTOForAddandEdit directorDTOForAddandEdit)
+        {
+            Director returnedDirector = DirectorRepository.GetDirectorById(id);
+            if (returnedDirector == null)
+            {
+                return new GeneralResponse()
+                {
+                    IsSuccess = false,
+                    Data = "Not Found Director, Please Enter Valid ID"
+                };
+            }
+            else
+            {
+                returnedDirector.Name = directorDTOForAddandEdit.Name;
+                returnedDirector.Age = directorDTOForAddandEdit.Age;
+                returnedDirector.Image = directorDTOForAddandEdit.Image;
+                returnedDirector.Overview = directorDTOForAddandEdit.Overview;
+
+                // Update the movies and series associated with the director
+                //returnedDirector.Movies = directorDTO.Movies.Select(m => new Movie()
+                //{
+                //    Title = m.Title,
+                //    Id = m.Id 
+                //}).ToList();
+
+                //returnedDirector.Series = directorDTO.Series.Select(s => new Series()
+                //{
+                //    Title = s.Title,
+                //    Id = s.Id
+                //}).ToList();
+
+                DirectorRepository.Update(returnedDirector);
+                DirectorRepository.Save();
+
+                return new GeneralResponse() { IsSuccess = true, Data = directorDTOForAddandEdit };
+            }
+        }
+
+
+
 
         [HttpGet]
         public ActionResult<dynamic> GetAllDirectors()
         {
+
             List<Director> directors = DirectorRepository.GetAllDirectors();
             List<DirectorDTO> directorDTOs = new List<DirectorDTO>();
             if (directors == null)
@@ -161,30 +177,16 @@ namespace Movies.Controllers
                     Movies = director.Movies.Select(m => new MoviesDirectorDTO
                     {
                         Title = m.Title,
-                        CreatedYear = m.CreatedYear,
-                        Description = m.Description,
-                        FilmSection = m.FilmSection,
-                        Id = m.Id,
-                        LengthMinutes = m.LengthMinutes,
-                        PosterImage = m.PosterImage,
-                        Quality = m.Quality,
-                        Revenue = m.Revenue,
-                        DirectorId = m.Director.Id
+
+                        Id = m.Id
+
+
                     }).ToList(),
 
                     Series = director.Series.Select(s => new SeriesDirectorDTO
                     {
                         Id = s.Id,
-                        CreatedYear = s.CreatedYear,
-                        Title = s.Title,
-                        Description = s.Description,
-                        Revenue = s.Revenue,
-                        FilmSection = s.FilmSection,
-                        LengthMinutes = s.LengthMinutes,
-                        PosterImage = s.PosterImage,
-                        Quality = s.Quality,
-                        DirectorID = s.Director.Id
-
+                        Title = s.Title
                     }).ToList()
 
                 };
@@ -217,34 +219,18 @@ namespace Movies.Controllers
                     Age = director.Age,
                     Image = director.Image,
                     Overview = director.Overview,
-                    Movies = director.Movies.Select(m => new MoviesDirectorDTO
-                    {
-                        Title = m.Title,
-                        CreatedYear = m.CreatedYear,
-                        Description = m.Description,
-                        FilmSection = m.FilmSection,
-                        Id = m.Id,
-                        LengthMinutes = m.LengthMinutes,
-                        PosterImage = m.PosterImage,
-                        Quality = m.Quality,
-                        Revenue = m.Revenue,
-                        DirectorId = m.Director.Id
-                    }).ToList(),
+                    //Movies = director.Movies.Select(m => new MoviesDirectorDTO
+                    //{
+                    //    Title = m.Title,
+                    //    Id = m.Id
+                    //}).ToList(),
 
-                    Series = director.Series.Select(s => new SeriesDirectorDTO
-                    {
-                        Id = s.Id,
-                        CreatedYear = s.CreatedYear,
-                        Title = s.Title,
-                        Description = s.Description,
-                        Revenue = s.Revenue,
-                        FilmSection = s.FilmSection,
-                        LengthMinutes = s.LengthMinutes,
-                        PosterImage = s.PosterImage,
-                        Quality = s.Quality,
-                        DirectorID = s.Director.Id
-
-                    }).ToList()
+                    //Series = director.Series.Select(s => new SeriesDirectorDTO
+                    //{
+                    //    Id = s.Id,
+                      
+                    //    Title = s.Title
+                    //}).ToList()
 
                 };
                 directorDTOs.Add(directorDTO);
