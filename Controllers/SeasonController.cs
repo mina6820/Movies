@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Movies.DTOs;
+using Movies.DTOs.ActorDTOs;
 using Movies.Models;
+using Movies.Repositories.ActroRepo;
 using Movies.Repositories.SeasonsRepo;
 
 namespace Movies.Controllers
@@ -16,9 +18,51 @@ namespace Movies.Controllers
         {
             this.seasonsRepo = seasonsRepo;
         }
+        [HttpGet]
+        public ActionResult<dynamic> GetAll()
+        {
+            List<Season> seasons = seasonsRepo.GetAll();
+            if (seasons == null)
+            {
+                return new GeneralResponse()
+                {
+                    IsSuccess = false,
+                    Data = "There is no data"
+                };
+            }
+            else
+            {
+                return new GeneralResponse()
+                {
+                    IsSuccess = true,
+                    Data = seasons
+                };
+            }
+        }
 
+        [HttpGet("{id:int}")]
+        public ActionResult<dynamic> GetById(int Id) {
+        Season season=seasonsRepo.GetById(Id);
+
+            if (season == null)
+            {
+                return new GeneralResponse()
+                {
+                    IsSuccess = false,
+                    Data = "There is no data"
+                };
+            }
+            else
+            {
+                return new GeneralResponse()
+                {
+                    IsSuccess = true,
+                    Data = season
+                };
+            }
+        }
         [HttpPost]
-        public ActionResult<dynamic> addSeason(SeasonsDTO seasonsDTO)
+        public ActionResult<dynamic> AddSeason(SeasonsDTO seasonsDTO)
         {
             if (seasonsDTO == null)
             {
@@ -46,5 +90,51 @@ namespace Movies.Controllers
                 };
             }
         }
+
+        [HttpPut("{id:int}")]
+        public ActionResult<dynamic> EditSeason(int Id,SeasonsDTO seasonDTO)
+        {
+            Season season = seasonsRepo.GetById(Id);
+            if(season == null)
+            {
+                return new GeneralResponse()
+                {
+                    IsSuccess = false,
+                    Data = "Season Not Found...!"
+                };
+            }
+            else
+            {
+                
+               season.Name = seasonDTO.Name;
+               season.NumOfEpisodes= seasonDTO.NumOfEpisodes;
+               season.SeriesID= seasonDTO.SeriesID;
+                seasonsRepo.Update(season);
+                seasonsRepo.Save();
+                return new GeneralResponse() { IsSuccess = true, Data = seasonDTO };
+
+            }
+        }
+        [HttpDelete("{id:int}")]
+        public ActionResult<dynamic> DeleteSeason(int Id) 
+        { 
+            Season season=seasonsRepo.GetById(Id);
+            if (season == null)
+            {
+                return new GeneralResponse()
+                {
+                    IsSuccess = false,
+                    Data = "Season Not Found...!"
+                };
+            }
+            else
+            {
+                season.IsDeleted = true;
+                seasonsRepo.Delete(Id);
+                seasonsRepo.Save();
+                return new GeneralResponse() { IsSuccess = true, Data = season };
+            }
+        }
+
     }
 }
