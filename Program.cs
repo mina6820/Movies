@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Movies.Models;
 using Movies.Repositories.ActroRepo;
 using Movies.Repositories.DirectorRepo;
+using Movies.Repositories.FavMovieRepo;
 
 namespace Movies
 {
@@ -25,6 +26,8 @@ namespace Movies
             });
 
             builder.Services.AddScoped<IActorRepository, ActorRepository>();
+            builder.Services.AddScoped<IFavMovieRepository, FavMovieRepository>();
+
             //builder.Services.AddScoped<IDirectorRepository, DirectorRepository>();
             var app = builder.Build();
 
