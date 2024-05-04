@@ -47,7 +47,7 @@ namespace Movies.Controllers
             {
                 MovieDTO movieDTO = new MovieDTO() { Id = movie.Id, Title = movie.Title, Description = movie.Description, PosterImage = movie.PosterImage
                                                      ,LengthMinutes = movie.LengthMinutes, FilmSection = movie.FilmSection, Quality = movie.Quality,
-                                                      DirectorID = movie.Director.Id , DirectorName = movie.Director.Name};
+                                                      DirectorID = movie.Director.Id, CreatedYear = movie.CreatedYear , DirectorName = movie.Director.Name};
                
                 movies.Add(movieDTO);
             }
