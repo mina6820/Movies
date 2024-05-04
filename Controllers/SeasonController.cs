@@ -154,24 +154,43 @@ namespace Movies.Controllers
         }
 
 
+        //[HttpDelete("{id:int}")]
+        //public ActionResult<dynamic> DeleteSeason(int Id) 
+        //{ 
+        //    Season season=seasonsRepo.GetById(Id);
+        //    if (season == null)
+        //    {
+        //        return new GeneralResponse()
+        //        {
+        //            IsSuccess = false,
+        //            Data = "Season Not Found...!"
+        //        };
+        //    }
+        //    else
+        //    {
+        //        season.IsDeleted = true;
+        //        seasonsRepo.Delete(Id);
+        //        seasonsRepo.Save();
+        //        return new GeneralResponse() { IsSuccess = true, Data = season };
+        //    }
+        //}
+
         [HttpDelete("{id:int}")]
-        public ActionResult<dynamic> DeleteSeason(int Id) 
-        { 
-            Season season=seasonsRepo.GetById(Id);
+        public ActionResult<dynamic> Delete(int id)
+        {
+            Season season = seasonsRepo.GetById(id);
             if (season == null)
             {
-                return new GeneralResponse()
-                {
-                    IsSuccess = false,
-                    Data = "Season Not Found...!"
-                };
+                return new GeneralResponse() { IsSuccess=false , Data="Season Not Found" };
+
             }
             else
             {
                 season.IsDeleted = true;
-                seasonsRepo.Delete(Id);
+                seasonsRepo.Update(season);
                 seasonsRepo.Save();
-                return new GeneralResponse() { IsSuccess = true, Data = season };
+                return new GeneralResponse() { IsSuccess = true, Data = "Season Deleted Successfully" };
+                 
             }
         }
 

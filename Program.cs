@@ -16,6 +16,7 @@ using Movies.Authentication;
 using Movies.Repositories.SeriesRepo;
 using Movies.Repositories.SeasonsRepo;
 using Microsoft.OpenApi.Models;
+using Movies.Repositories.FavSeriesRepo;
 
 namespace Movies
 {
@@ -43,6 +44,8 @@ namespace Movies
             builder.Services.AddScoped<IActorRepository, ActorRepository>();
             builder.Services.AddScoped<IDirectorRepository, DirectorRepository>();
             builder.Services.AddScoped<IFavMovieRepository, FavMovieRepository>();
+            builder.Services.AddScoped<IFavSeriesRepository, FavSeriesRepository>();
+
             builder.Services.AddScoped<ISeriesRepository, SeriesRepository>();
             builder.Services.AddScoped<ISeasonsRepo, SeasonsRepo>();
 
