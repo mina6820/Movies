@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Movies.DTOs;
 using Movies.Models;
+using Movies.Repositories.DirectorRepo;
 using Movies.Repositories.SeasonsRepo;
 using Movies.Repositories.SeriesRepo;
 using System.Diagnostics.Eventing.Reader;
@@ -13,10 +14,13 @@ namespace Movies.Controllers
     {
         private readonly ISeriesRepository _seriesRepository;
         private readonly ISeasonsRepo _seasonsRepo;
-        public SeriesController(ISeriesRepository seriesRepository,ISeasonsRepo seasonsRepo)
+        private readonly IDirectorRepository directorRepository;
+
+        public SeriesController(ISeriesRepository seriesRepository,ISeasonsRepo seasonsRepo , IDirectorRepository directorRepository)
         {
             _seriesRepository = seriesRepository;
             _seasonsRepo = seasonsRepo;
+            this.directorRepository = directorRepository;
         }
         [HttpGet]
         public ActionResult<dynamic> GetAll()
@@ -78,6 +82,9 @@ namespace Movies.Controllers
 
 
                 };
+
+                Director director = directorRepository.GetById(seriesDTO.DirectorID);
+                director.Series.Add(series);
                 //Season season = new Season()
                 //{
                 //    NumOfEpisodes = 15,
