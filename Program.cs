@@ -14,6 +14,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Movies.Authentication;
 using Microsoft.OpenApi.Models;
+using Movies.Repositories.MovieLikeRepo;
+using Movies.Repositories.SeriesLikeRepo;
 
 namespace Movies
 {
@@ -41,6 +43,11 @@ namespace Movies
             builder.Services.AddScoped<IActorRepository, ActorRepository>();
             builder.Services.AddScoped<IDirectorRepository, DirectorRepository>();
             builder.Services.AddScoped<IFavMovieRepository, FavMovieRepository>();
+
+            builder.Services.AddScoped<IMovie_LikeRepo,MovieLikeRepository>();
+            builder.Services.AddScoped<ISeries_LikeRepo,SeriesLikeRepo>();
+            // IHttpContextAccessor
+         //   builder.Services.AddScoped<IHttpContextAccessor>();
 
 
 
