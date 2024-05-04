@@ -1,4 +1,4 @@
-﻿namespace Movies.DTOs
+﻿namespace Movies.DTOs.Favourite
 {
     public class FavMovieDTO
     {

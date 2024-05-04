@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Movies.DTOs;
+using Movies.DTOs.Favourite;
 using Movies.Models;
 using Movies.Repositories.FavMovieRepo;
 using Movies.Repositories.FavSeriesRepo;
-using Movies.Repositories.SeriesRepo;
 using System.Security.Claims;
 
 namespace Movies.Controllers
@@ -15,11 +14,10 @@ namespace Movies.Controllers
     public class FavSeriesController : ControllerBase
     {
         private readonly IFavSeriesRepository favSeriesRepository;
-        private readonly ISeriesRepository seriesRepository;
-        public FavSeriesController(IFavSeriesRepository favSeriesRepository , ISeriesRepository seriesRepository)
+
+        public FavSeriesController(IFavSeriesRepository favSeriesRepository)
         {
             this.favSeriesRepository = favSeriesRepository;
-            this.seriesRepository = seriesRepository;
         }
 
         [HttpGet]
@@ -41,8 +39,7 @@ namespace Movies.Controllers
                     SeriesId=item.SeriesID,
                     UserId=item.UserID,
                     SeriesName=item.Series.Title,
-                    SeriesImage=item.Series.PosterImage,
-                    SeriesDescription=item.Series.Description,
+                    SeriesImage=item.Series.PosterImage
 
                 };
 
@@ -53,68 +50,38 @@ namespace Movies.Controllers
 
         }
 
-        [HttpGet("{SeriesID}")]
+        [HttpGet("{id}")]
         [Authorize]
-        public ActionResult<dynamic> IsFavorite( int SeriesID)
+        public ActionResult<dynamic> IsFavorite( int id )
         {
-           Series series = seriesRepository.GetById(SeriesID);
-            if (series == null)
-            {
-                return new GeneralResponse() { IsSuccess = false, Data = "Invalid Series" };
-            }
-
-            ClaimsPrincipal user = this.User;
-
-            string userLginedId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            bool IsFavoriteSeries= favSeriesRepository.IsFavorite(SeriesID, userLginedId);
-            if (IsFavoriteSeries)
-            {
-                return new GeneralResponse() { IsSuccess = true, Data = "Seires Found" };
-            }else
-            {
-                return new GeneralResponse() { IsSuccess = false, Data = "Series Not Found" };
-            }
-            
+            //error
+            bool IsFavoriteSeries= favSeriesRepository.IsFavorite(id);
+            return new GeneralResponse() { IsSuccess=true ,Data= IsFavoriteSeries };
         }
 
         [HttpPost("{SeriesId:int}")]
         [Authorize]
         public ActionResult<dynamic> AddSeriesToFavorite(int SeriesId)
         {
-            // Get the currently authenticated user's identity
-            ClaimsPrincipal user = this.User;
-
-            // Retrieve user's ID
-            string userLginedId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            Series series = seriesRepository.GetById(SeriesId);
-            bool isFoundFavSeries= favSeriesRepository.IsFavorite(SeriesId,userLginedId);
-
-            if (series == null)
+            if (SeriesId == null)
             {
-                return new GeneralResponse() { IsSuccess = false, Data = "Invalid Series" };
+                return new GeneralResponse() { IsSuccess = false, Data = "plz enter valid Data" };
             }
-
-            if (isFoundFavSeries)
-            {
-                return new GeneralResponse() { IsSuccess = false, Data = "Series Already Exist" };
-
-            }
-
             else
             {
-                //// Get the currently authenticated user's identity
-                //ClaimsPrincipal user = this.User;
+                // Get the currently authenticated user's identity
+                ClaimsPrincipal user = this.User;
 
-                //// Retrieve user's ID
-                //string userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                // Retrieve user's ID
+                string userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 FavouriteSeries favouriteSeries = new FavouriteSeries()
                 {
                     SeriesID= SeriesId,
-                    UserID = userLginedId,
+                    UserID = userId,
                 };
                 favSeriesRepository.Insert(favouriteSeries);
                 favSeriesRepository.Save();
-                return new GeneralResponse() { IsSuccess = true, Data = " Added Successfully " };
+                return new GeneralResponse() { IsSuccess = true, Data = favouriteSeries };
 
             }
         }
