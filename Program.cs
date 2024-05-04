@@ -7,6 +7,9 @@ using Movies.Repositories.MovieRepo;
 using TestingMVC.Repo;
 using Movies.Repositories.ActroRepo;
 using Movies.Repositories.DirectorRepo;
+
+using Movies.Repositories.CategoryMovieRepo;
+
 using Movies.Repositories.FavMovieRepo;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -45,6 +48,7 @@ namespace Movies
 
             builder.Services.AddScoped<ICategoryRepository , CategoryRepository>();
             builder.Services.AddScoped<IMovieRepository , MovieRepository>();
+            builder.Services.AddScoped<ICategoryMovieRepository , CategoryMovieRepository>();
 
             builder.Services.AddScoped<IActorRepository, ActorRepository>();
             builder.Services.AddScoped<IDirectorRepository, DirectorRepository>();
