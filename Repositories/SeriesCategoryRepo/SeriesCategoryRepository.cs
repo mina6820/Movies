@@ -1,0 +1,67 @@
+﻿using Instagram_Clone.Repositories;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Movies.Models;
+
+namespace Movies.Repositories.SeriesCategoryRepo
+{
+    public class SeriesCategoryRepository : Repository<CategorySeries>, ISeriesCategoryRepository
+    {
+
+        private readonly Context context;
+        public SeriesCategoryRepository(Context _context) : base(_context)
+        {
+            context = _context;
+        }
+
+        public List<Series> GetAllSeriesInCategory (int categoryId)
+        {
+            List<CategorySeries> categorySeries= context.CategorieSeries.Include(s=>s.Series).Where(s=>s.CategoryID == categoryId).ToList();
+            List<Series> series = new List<Series>();
+
+            foreach (var category in categorySeries)
+            {
+                Series seriesItem = category.Series;
+                series.Add(seriesItem);
+
+            }
+
+            return series;
+
+        }
+
+        public bool IsCategoryFound(int CategoryId)
+        {
+            CategorySeries categorySeries = context.CategorieSeries.FirstOrDefault(cs=>cs.CategoryID == CategoryId);
+
+            if (categorySeries == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+      
+        public bool DeleteCategorySeries(int CategorySeriesId)
+        {
+            CategorySeries categorySeries = context.CategorieSeries.FirstOrDefault(cs => cs.Id == CategorySeriesId);
+            if (categorySeries != null)
+            {
+                context.CategorieSeries.Remove(categorySeries);
+                context.SaveChanges(); 
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+
+
+
+    }
+}
