@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
-using Movies.DTOs;
+using Movies.DTOs.ActorDTOs;
 using Movies.Models;
 using Movies.Repositories.ActroRepo;
 using System.IO;
