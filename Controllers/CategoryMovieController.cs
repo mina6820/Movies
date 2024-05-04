@@ -36,6 +36,12 @@ namespace Movies.Controllers
             if (category == null)
                 return new GeneralResponse() { IsSuccess = false, Data = $"No Category With ID : {categoryId}" };
 
+            // sure if the movie is not exist in this category already 
+            List<Movie> moviesDb = categoryMovieRepository.GetMoviesByCategoryId(categoryId);
+            if (moviesDb.Contains(movie))
+                return new GeneralResponse() { IsSuccess = false, Data = "This Movie already in this Category" };
+
+
             // Create a new entry in CategoryMovie class
             CategoryMovie categoryMovie = new CategoryMovie()
             {
@@ -55,10 +61,14 @@ namespace Movies.Controllers
         [HttpGet("{categoryId:int}")]
         public ActionResult<GeneralResponse> getAllMoviesForCategory(int categoryId)
         {
+            // get all movies for this category
             List<Movie> moviesDb = categoryMovieRepository.GetMoviesByCategoryId(categoryId);
+            
+            // sure that the list is not empty
             if (moviesDb.Count == 0)
                 return new GeneralResponse() { IsSuccess = false, Data = $"No Movie in Category ID : {categoryId}" };
             List<MovieDTO> movies = new List<MovieDTO>();
+            // mapping from moviesDb to movies
             foreach (Movie movie in moviesDb)
             {
                 MovieDTO movieDTO = new MovieDTO()
