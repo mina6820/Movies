@@ -40,25 +40,38 @@ namespace Movies.Controllers
             }
         }
 
-        [HttpGet("{id:int}")]
-        public ActionResult<dynamic> GetById(int Id) {
-        Season season=seasonsRepo.GetById(Id);
+        //[HttpGet("{id:int}")]
+        //public ActionResult<dynamic> GetById(int Id) {
+        //Season season=seasonsRepo.GetById(Id);
 
+        //    if (season == null)
+        //    {
+        //        return new GeneralResponse()
+        //        {
+        //            IsSuccess = false,
+        //            Data = "There is no data"
+        //        };
+        //    }
+        //    else
+        //    {
+        //        return new GeneralResponse()
+        //        {
+        //            IsSuccess = true,
+        //            Data = season
+        //        };
+        //    }
+        //}
+
+        [HttpGet("{id:int}")]
+        public ActionResult<dynamic> GetSes(int id) {
+        
+            Season season = seasonsRepo.GetById(id);
             if (season == null)
             {
-                return new GeneralResponse()
-                {
-                    IsSuccess = false,
-                    Data = "There is no data"
-                };
-            }
-            else
-            {
-                return new GeneralResponse()
-                {
-                    IsSuccess = true,
-                    Data = season
-                };
+                return new GeneralResponse() { Data = "Not Found", IsSuccess = false };
+            }else {
+
+                return new GeneralResponse() { IsSuccess = true, Data = season };
             }
         }
         [HttpPost]
@@ -91,30 +104,56 @@ namespace Movies.Controllers
             }
         }
 
+        //[HttpPut("{id:int}")]
+        //public ActionResult<dynamic> EditSeason(int Id,SeasonsDTO seasonDTO)
+        //{
+        //    Season season = seasonsRepo.GetById(Id);
+        //    if(season == null)
+        //    {
+        //        return new GeneralResponse()
+        //        {
+        //            IsSuccess = false,
+        //            Data = "Season Not Found...!"
+        //        };
+        //    }
+        //    else
+        //    {
+
+        //       season.Name = seasonDTO.Name;
+        //       season.NumOfEpisodes= seasonDTO.NumOfEpisodes;
+        //       season.SeriesID= seasonDTO.SeriesID;
+        //        seasonsRepo.Update(season);
+        //        seasonsRepo.Save();
+        //        return new GeneralResponse() { IsSuccess = true, Data = seasonDTO };
+
+        //    }
+        //}
+
+
+
         [HttpPut("{id:int}")]
-        public ActionResult<dynamic> EditSeason(int Id,SeasonsDTO seasonDTO)
-        {
-            Season season = seasonsRepo.GetById(Id);
-            if(season == null)
-            {
-                return new GeneralResponse()
-                {
-                    IsSuccess = false,
-                    Data = "Season Not Found...!"
-                };
-            }
+           public ActionResult<dynamic> edit(int id , SeasonsDTO seasonsDTO) {
+            if (seasonsDTO == null)
+            { return new GeneralResponse() { IsSuccess=false, Data="Not found" }; }
             else
             {
-                
-               season.Name = seasonDTO.Name;
-               season.NumOfEpisodes= seasonDTO.NumOfEpisodes;
-               season.SeriesID= seasonDTO.SeriesID;
+                Season season = new Season() {
+                    Name = seasonsDTO.Name,
+                    NumOfEpisodes = seasonsDTO.NumOfEpisodes,
+                    SeriesID = seasonsDTO.SeriesID,
+                };
+
                 seasonsRepo.Update(season);
                 seasonsRepo.Save();
-                return new GeneralResponse() { IsSuccess = true, Data = seasonDTO };
-
+                return new GeneralResponse() { 
+                    Data = seasonsDTO,
+                    IsSuccess = true    
+                };
             }
+        
         }
+
+
         [HttpDelete("{id:int}")]
         public ActionResult<dynamic> DeleteSeason(int Id) 
         { 
