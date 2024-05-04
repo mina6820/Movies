@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Movies.DTOs;
 using Movies.DTOs.Favourite;
 using Movies.Models;
 using Movies.Repositories.FavMovieRepo;
 using Movies.Repositories.FavSeriesRepo;
+using Movies.Repositories.SeriesRepo;
 using System.Security.Claims;
 
 namespace Movies.Controllers
@@ -14,10 +16,11 @@ namespace Movies.Controllers
     public class FavSeriesController : ControllerBase
     {
         private readonly IFavSeriesRepository favSeriesRepository;
-
-        public FavSeriesController(IFavSeriesRepository favSeriesRepository)
+        private readonly ISeriesRepository seriesRepository;
+        public FavSeriesController(IFavSeriesRepository favSeriesRepository, ISeriesRepository seriesRepository)
         {
             this.favSeriesRepository = favSeriesRepository;
+            this.seriesRepository = seriesRepository;
         }
 
         [HttpGet]
@@ -29,32 +32,33 @@ namespace Movies.Controllers
 
             // Retrieve user's ID
             string userLginedId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            List<FavouriteSeries> favouriteSeries=favSeriesRepository.GetAllFavSeriesForUser(userLginedId);
-            List<FavSeriesDTO> FavListDTO=new List<FavSeriesDTO>();
+            List<FavouriteSeries> favouriteSeries = favSeriesRepository.GetAllFavSeriesForUser(userLginedId);
+            List<FavSeriesDTO> FavListDTO = new List<FavSeriesDTO>();
             foreach (var item in favouriteSeries)
             {
                 FavSeriesDTO favSeriesDTO = new FavSeriesDTO()
                 {
                     Id = item.Id,
-                    SeriesId=item.SeriesID,
-                    UserId=item.UserID,
-                    SeriesName=item.Series.Title,
-                    SeriesImage=item.Series.PosterImage
+                    SeriesId = item.SeriesID,
+                    UserId = item.UserID,
+                    SeriesName = item.Series.Title,
+                    SeriesImage = item.Series.PosterImage,
+                    SeriesDescription = item.Series.Description,
 
                 };
 
                 FavListDTO.Add(favSeriesDTO);
             }
-            return new GeneralResponse() { IsSuccess=true , Data= FavListDTO };
+            return new GeneralResponse() { IsSuccess = true, Data = FavListDTO };
 
 
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{SeriesID}")]
         [Authorize]
-        public ActionResult<dynamic> IsFavorite( int id )
+        public ActionResult<dynamic> IsFavorite(int SeriesID)
         {
-           Series series = seriesRepository.GetById(SeriesID);
+            Series series = seriesRepository.GetById(SeriesID);
             if (series == null)
             {
                 return new GeneralResponse() { IsSuccess = false, Data = "Invalid Series" };
@@ -63,41 +67,57 @@ namespace Movies.Controllers
             ClaimsPrincipal user = this.User;
 
             string userLginedId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            bool IsFavoriteSeries= favSeriesRepository.IsFavorite(SeriesID, userLginedId);
+            bool IsFavoriteSeries = favSeriesRepository.IsFavorite(SeriesID, userLginedId);
             //test
             if (IsFavoriteSeries)
             {
                 return new GeneralResponse() { IsSuccess = true, Data = "Seires Found" };
-            }else
+            }
+            else
             {
                 return new GeneralResponse() { IsSuccess = false, Data = "Series Not Found" };
             }
-            
+
         }
 
         [HttpPost("{SeriesId:int}")]
         [Authorize]
         public ActionResult<dynamic> AddSeriesToFavorite(int SeriesId)
         {
-            if (SeriesId == null)
+            // Get the currently authenticated user's identity
+            ClaimsPrincipal user = this.User;
+
+            // Retrieve user's ID
+            string userLginedId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            Series series = seriesRepository.GetById(SeriesId);
+            bool isFoundFavSeries = favSeriesRepository.IsFavorite(SeriesId, userLginedId);
+
+            if (series == null)
             {
-                return new GeneralResponse() { IsSuccess = false, Data = "plz enter valid Data" };
+                return new GeneralResponse() { IsSuccess = false, Data = "Invalid Series" };
             }
+
+            if (isFoundFavSeries)
+            {
+                return new GeneralResponse() { IsSuccess = false, Data = "Series Already Exist" };
+
+            }
+
             else
             {
-                // Get the currently authenticated user's identity
-                ClaimsPrincipal user = this.User;
+                //// Get the currently authenticated user's identity
+                //ClaimsPrincipal user = this.User;
 
-                // Retrieve user's ID
-                string userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                //// Retrieve user's ID
+                //string userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 FavouriteSeries favouriteSeries = new FavouriteSeries()
                 {
-                    SeriesID= SeriesId,
-                    UserID = userId,
+                    SeriesID = SeriesId,
+                    UserID = userLginedId,
                 };
                 favSeriesRepository.Insert(favouriteSeries);
                 favSeriesRepository.Save();
-                return new GeneralResponse() { IsSuccess = true, Data = favouriteSeries };
+                return new GeneralResponse() { IsSuccess = true, Data = " Added Successfully " };
 
             }
         }

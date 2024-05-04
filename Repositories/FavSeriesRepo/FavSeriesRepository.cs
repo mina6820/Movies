@@ -14,17 +14,18 @@ namespace Movies.Repositories.FavSeriesRepo
 
         public List<FavouriteSeries> GetAllFavSeriesForUser(string userId)
         {
-            return _context.FavouriteSeries.Include(f=>f.Series).Where(fav => fav.UserID == userId).ToList();
+            return _context.FavouriteSeries.Include(f => f.Series).Where(fav => fav.UserID == userId).ToList();
         }
 
-       public bool IsFavorite(int FavSeriesId,string UserLogginedId)
+        public bool IsFavorite(int FavSeriesId, string UserLogginedId)
         {
-            FavouriteSeries favouriteSeries =  _context.FavouriteSeries.FirstOrDefault(fav=>fav.SeriesID== FavSeriesId && fav.UserID== UserLogginedId);
-           
+            FavouriteSeries favouriteSeries = _context.FavouriteSeries.FirstOrDefault(fav => fav.SeriesID == FavSeriesId && fav.UserID == UserLogginedId);
+
             if (favouriteSeries == null)
             {
                 return false;
-            }else
+            }
+            else
             {
                 return true;
             }
@@ -32,7 +33,7 @@ namespace Movies.Repositories.FavSeriesRepo
 
         public bool RemoveSeries(int Id)
         {
-            FavouriteSeries Favseries = _context.FavouriteSeries.FirstOrDefault(Fav => Fav.Id==Id);
+            FavouriteSeries Favseries = _context.FavouriteSeries.FirstOrDefault(Fav => Fav.Id == Id);
 
             if (Favseries != null)
             {
