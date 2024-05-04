@@ -7,6 +7,6 @@ namespace Movies.Repositories.ActroRepo
     {
         //public Actor GetActorById(int id);
         //public void DeleteActor(int id);
-        public Actor GetActorByName(string name);
+        public List<Actor> SearchActor(string name);
     }
 }

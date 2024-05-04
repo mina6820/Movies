@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
-using Movies.DTOs;
+using Movies.DTOs.ActorDTOs;
 using Movies.Models;
 using Movies.Repositories.ActroRepo;
+using System.IO;
 
 namespace Movies.Controllers
 {
@@ -17,22 +19,70 @@ namespace Movies.Controllers
             ActorRepository = _ActorRepository;
         }
 
-        
         [HttpPost]
-        public ActionResult<dynamic> AddActor(Actor actor)
+        public ActionResult<dynamic> AddActor(ActorDTO actorDTO)
         {
-            ActorRepository.Insert(actor);
-            ActorRepository.Save();
-            return new GeneralResponse() { IsSuccess = true, Data = actor };
+            if (ModelState.IsValid)
+            {
+                Actor actor = new Actor()
+                {
+                    Age = actorDTO.Age,
+                    ID = actorDTO.ID,
+                    Image = actorDTO.Image,
+                    Name = actorDTO.Name,
+                    Overview = actorDTO.Overview
+                };
+                ActorRepository.Insert(actor);
+                ActorRepository.Save();
+                return new GeneralResponse() { IsSuccess = true, Data = actor };
+            }
+            else
+            {
+                return new GeneralResponse()
+                {
+                    IsSuccess = false,
+                    Data = " Addition Operation Failed "
+                };
+            }
+           
             //return CreatedAtAction(nameof(GetActorById), new { id = actor.ID }, actor);
         }
 
-
         [HttpGet]
-        public IActionResult GetAllActors()
+        [Authorize]
+        public ActionResult<dynamic> GetAllActors()
         {
             List<Actor> actors = ActorRepository.GetAll();
-            return Ok(actors);
+            List<ActorDTO> actorDTOs = new List<ActorDTO>();
+
+            if (actors !=null)
+            {
+                foreach (Actor actor in actors)
+                {
+                    ActorDTO actorDTO = new ActorDTO()
+                    {
+                        Name = actor.Name,
+                        ID = actor.ID,
+                        Image = actor.Image,
+                        Overview = actor.Overview,
+                        Age = actor.Age
+
+                    };
+                    actorDTOs.Add(actorDTO);
+                }
+                return new GeneralResponse() { IsSuccess = true, Data = actorDTOs };
+            }
+
+            else
+            {
+                return new GeneralResponse()
+                { 
+                    IsSuccess = false,
+                    Data = "Not Found Actors "
+                };
+            }
+               
+        
         }
 
 
@@ -65,16 +115,44 @@ namespace Movies.Controllers
 
 
         [HttpGet("{name:alpha}")]
-        public IActionResult GetActorByName(string name)
+        public ActionResult<dynamic> SearchActor(string name)
         {
-            Actor actor = ActorRepository.GetActorByName(name);
-            return Ok(actor);
+            List<Actor> actors = ActorRepository.SearchActor(name);
+            List<ActorDTO> actorDTOs = new List<ActorDTO>();
+
+            if (actors == null || actors.Count == 0)
+            {
+                return new GeneralResponse()
+                {
+                    IsSuccess = false,
+                    Data = "Not Found Actors "
+                };
+            }
+            else
+            {
+                foreach (Actor actor in actors)
+                {
+                    ActorDTO actorDTO = new ActorDTO()
+                    {
+                        Name = actor.Name,
+                        ID = actor.ID,
+                        Image = actor.Image,
+                        Overview = actor.Overview,
+                        Age = actor.Age
+
+                    };
+                    actorDTOs.Add(actorDTO);
+                    
+                }
+                return new GeneralResponse() { IsSuccess = true, Data = actorDTOs };
+            }
+
         }
 
 
         [HttpDelete]
         [Route("{id}")]
-        public IActionResult DeleteActor(int id)
+        public ActionResult<dynamic> DeleteActor(int id)
         {
             //ActorRepository.DeleteActor(id);
             Actor actor  =  ActorRepository.GetById(id);
@@ -83,11 +161,15 @@ namespace Movies.Controllers
                 actor.IsDeleted = true;
                 ActorRepository.Delete(id);
                 ActorRepository.Save();
-                return NoContent();
+                return new GeneralResponse() { IsSuccess = true, Data = actor };
             }
             else
             {
-                return BadRequest();
+                return new GeneralResponse()
+                {
+                    IsSuccess = false,
+                    Data = "Not Found Actor , Please Enter Valid ID "
+                };
             }
            
         }
@@ -95,16 +177,28 @@ namespace Movies.Controllers
 
         [HttpPut]
         [Route("{id}")]
-        public IActionResult EditActor(int id,Actor actor)
+        public ActionResult<dynamic> EditActor(int id,ActorDTO actorDTO)
         {
             Actor ReturnedActor = ActorRepository.GetById(id);
-            ReturnedActor.ID = actor.ID;
-            ReturnedActor.Name = actor.Name;
-            ReturnedActor.Image = actor.Image;
-            ReturnedActor.Overview = actor.Overview;
-            ActorRepository.Update(ReturnedActor);
-            ActorRepository.Save();
-            return Ok(ReturnedActor);
+            if (ReturnedActor == null)
+            {
+                return new GeneralResponse()
+                {
+                    IsSuccess = false,
+                    Data = "Not Found Actor , Please Enter Valid ID "
+                };
+            }
+            else
+            {
+                ReturnedActor.ID = actorDTO.ID;
+                ReturnedActor.Name = actorDTO.Name;
+                ReturnedActor.Image = actorDTO.Image;
+                ReturnedActor.Overview = actorDTO.Overview;
+                ActorRepository.Update(ReturnedActor);
+                ActorRepository.Save();
+
+                return new GeneralResponse() { IsSuccess = true, Data = actorDTO };
+            }
         }
     }
 }
