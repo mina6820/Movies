@@ -49,6 +49,7 @@ namespace Movies
 
 
 
+
             builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<Context>();
 
@@ -70,6 +71,12 @@ namespace Movies
                         Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecritKey"]))
                 };
             });
+
+    //        builder.Services.AddControllers()
+    //.AddJsonOptions(options =>
+    //{
+    //    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    //});
 
             /*-----------------------------Swagger PArt-----------------------------*/
             #region Swagger REgion

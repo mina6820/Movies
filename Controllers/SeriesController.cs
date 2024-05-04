@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Movies.DTOs;
+using Movies.DTOs.DirectorDTOs;
 using Movies.Models;
 using Movies.Repositories.DirectorRepo;
 using Movies.Repositories.SeasonsRepo;
@@ -67,11 +68,10 @@ namespace Movies.Controllers
         [HttpPost]
         public ActionResult<dynamic> AddSeries(SeriesDTO seriesDTO)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 Series series = new Series()
                 {
-
                     Title = seriesDTO.Title,
                     CreatedYear = seriesDTO.CreatedYear,
                     Description = seriesDTO.Description,
@@ -79,29 +79,28 @@ namespace Movies.Controllers
                     DirectorID = seriesDTO.DirectorID,
                     Revenue = seriesDTO.Revenue,
                     LengthMinutes = seriesDTO.LengthMinutes,
-
-
                 };
 
-                Director director = directorRepository.GetById(seriesDTO.DirectorID);
-                director.Series.Add(series);
-                //Season season = new Season()
-                //{
-                //    NumOfEpisodes = 15,
-                //    SeriesID = series.Id,
-                //    Series=series
-              
-                //};
-
-               // series.Seasons.Add();
-              //  _seasonsRepo.Insert(season);
                 _seriesRepository.Insert(series);
                 _seriesRepository.Save();
-             //   _seasonsRepo.Save();
+
+                // Retrieve director information
+                Director director = directorRepository.GetById(seriesDTO.DirectorID);
+                DirectorDTO directorDTO = new DirectorDTO
+                {
+                    Id = director.Id,
+                    Name = director.Name
+                    // Populate other properties as needed
+                };
+
                 return new GeneralResponse()
                 {
                     IsSuccess = true,
-                    Data = series
+                    Data = new
+                    {
+                        Series = seriesDTO,
+                        Director = directorDTO
+                    }
                 };
             }
             else
@@ -113,6 +112,7 @@ namespace Movies.Controllers
                 };
             }
         }
-        
+
+
     }
 }
