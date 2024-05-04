@@ -54,9 +54,25 @@ namespace Movies.Controllers
         [Authorize]
         public ActionResult<dynamic> IsFavorite( int id )
         {
-            //error
-            bool IsFavoriteSeries= favSeriesRepository.IsFavorite(id);
-            return new GeneralResponse() { IsSuccess=true ,Data= IsFavoriteSeries };
+           Series series = seriesRepository.GetById(SeriesID);
+            if (series == null)
+            {
+                return new GeneralResponse() { IsSuccess = false, Data = "Invalid Series" };
+            }
+
+            ClaimsPrincipal user = this.User;
+
+            string userLginedId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            bool IsFavoriteSeries= favSeriesRepository.IsFavorite(SeriesID, userLginedId);
+            //test
+            if (IsFavoriteSeries)
+            {
+                return new GeneralResponse() { IsSuccess = true, Data = "Seires Found" };
+            }else
+            {
+                return new GeneralResponse() { IsSuccess = false, Data = "Series Not Found" };
+            }
+            
         }
 
         [HttpPost("{SeriesId:int}")]
