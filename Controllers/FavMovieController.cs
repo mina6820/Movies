@@ -124,13 +124,13 @@ namespace Movies.Controllers
             }
         }
 
-        [HttpDelete("{Id}")]
+        [HttpDelete("{MovieID}")]
         [Authorize]
-        public ActionResult<dynamic> DeleteMovie(int Id)
+        public ActionResult<dynamic> DeleteMovie(int MovieID)
         {
             ClaimsPrincipal user = this.User;
             string userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            bool isRemoved = favMovieRepository.RemoveMovie(Id);
+            bool isRemoved = favMovieRepository.RemoveMovieFromFevorite(MovieID,userId);
 
             if (isRemoved)
             {

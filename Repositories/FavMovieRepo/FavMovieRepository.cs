@@ -47,5 +47,21 @@ namespace Movies.Repositories.FavMovieRepo
                 return false;
             }
         }
+
+        public bool RemoveMovieFromFevorite(int MovieId, string UserId)
+        {
+            FavouriteMovie favouriteMovie = context.FavouriteMovies.FirstOrDefault(Fav => Fav.MovieID == MovieId && Fav.UserID == UserId);
+
+            if (favouriteMovie != null)
+            {
+                context.FavouriteMovies.Remove(favouriteMovie);
+                context.SaveChanges(); // Make sure to save changes after removal
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }
