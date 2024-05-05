@@ -67,6 +67,7 @@ namespace Movies.Controllers
 
             string userLginedId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             bool IsFavoriteSeries= favSeriesRepository.IsFavorite(SeriesID, userLginedId);
+            //test
             if (IsFavoriteSeries)
             {
                 return new GeneralResponse() { IsSuccess = true, Data = "Seires Found" };
