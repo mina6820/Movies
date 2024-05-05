@@ -72,7 +72,7 @@ namespace Movies.Controllers
             }
 
             bool CategoryFound = seriesCategoryRepository.IsCategoryFound(CategoryId);
-
+               
             if (CategoryFound)
             {
                 List<Series> series = seriesCategoryRepository.GetAllSeriesInCategory(CategoryId);
@@ -81,7 +81,8 @@ namespace Movies.Controllers
                 {
                     SeriesToGetDTO seriesToGetDTO = new SeriesToGetDTO()
                     {
-                        Id = item.Id,
+                       
+                        SeriesId = item.Id,
                         CreatedYear = item.CreatedYear,
                         Description = item.Description,
                         DirectorID = item.DirectorID,
@@ -91,7 +92,7 @@ namespace Movies.Controllers
                         Quality = item.Quality,
                         Revenue = item.Revenue,
                         Title = item.Title,
-                       DirectorName=item.Director.Name,
+                        DirectorName=item.Director.Name,
                         Seasons = item.Seasons.Select(season => new SeasonsDTO
                         {
                             NumOfEpisodes = season.NumOfEpisodes,
@@ -113,27 +114,31 @@ namespace Movies.Controllers
         }
 
         [HttpDelete]
-        [Route("{CategorySeriesId}")]
-        public ActionResult<dynamic> DeleteSeriesFromCategory(int CategorySeriesId)
+        [Route("{CategoryId:int}/{SeriesId:int}")]
+        public ActionResult<dynamic> DeleteSeriesFromCategory(int CategoryId, int SeriesId)
         {
-          CategorySeries categorySeries =  seriesCategoryRepository.GetById(CategorySeriesId);
-            if (categorySeries == null)
-            {
-                return new GeneralResponse() { IsSuccess = false, Data = "Invalid CategorySeries" };
-            }
+            Category category = categoryRepository.GetCategoryById(CategoryId);
+            Series series = seriesRepository.GetById(SeriesId);
 
-            bool IsDeleted = seriesCategoryRepository.DeleteCategorySeries(CategorySeriesId);
-            if (IsDeleted)
+            if (category != null && series != null)
             {
-                return new GeneralResponse() { IsSuccess = true, Data = "Deleted Successfully" };
-            }
-            else
-            {
-                return new GeneralResponse() { IsSuccess = false, Data = "Series Already Doesnot Exist In This Category" };
-            }
+                bool IsSeriesFound = seriesCategoryRepository.IsSeriesFoundInCategory(SeriesId, CategoryId);
+                if (IsSeriesFound)
+                {
+                    seriesCategoryRepository.DeleteSeriesFromCategory( CategoryId, SeriesId);
+                    return new GeneralResponse() { IsSuccess = true, Data = "Series Deleted Successfully ): " };
 
+                }
+                else
+                {
+                    return new GeneralResponse() { IsSuccess = false, Data = "Series Not In this Category ): " };
+
+                }
+            }
+            else {
+                return new GeneralResponse() { IsSuccess = false, Data = "Invalid Data ): " };
+            }
         }
-
 
         [HttpPut("{CategorySeriesId:int}")]
 

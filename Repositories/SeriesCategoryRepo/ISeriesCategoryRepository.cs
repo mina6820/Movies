@@ -10,6 +10,7 @@ namespace Movies.Repositories.SeriesCategoryRepo
         public bool IsSeriesFoundInCategory(int SeriesId , int CategoryId);
 
         public bool DeleteCategorySeries(int CategorySeriesId);
+        public bool DeleteSeriesFromCategory(int CategoryId, int SeriesId);
 
     }
 }

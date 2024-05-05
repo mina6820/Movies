@@ -5,7 +5,10 @@ namespace Movies.DTOs
 {
     public class SeriesToGetDTO
     {
-        public int Id { get; set; }
+        
+        public int SeriesId { get; set; }
+
+
         public string Title { get; set; }
         public string? Description { get; set; }
         public int? CreatedYear { get; set; }

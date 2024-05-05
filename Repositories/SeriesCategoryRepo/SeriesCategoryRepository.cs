@@ -81,6 +81,21 @@ namespace Movies.Repositories.SeriesCategoryRepo
             }
         }
 
+        public bool DeleteSeriesFromCategory(int CategoryId , int SeriesId)
+        {
+            CategorySeries categorySeries = context.CategorieSeries.FirstOrDefault(cs => cs.CategoryID == CategoryId && cs.SeriesID== SeriesId);
+            if (categorySeries != null)
+            {
+                context.CategorieSeries.Remove(categorySeries);
+                context.SaveChanges();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
 
 
 
