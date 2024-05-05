@@ -14,9 +14,9 @@ namespace Movies.Repositories.SeriesCategoryRepo
             context = _context;
         }
 
-        public List<Series> GetAllSeriesInCategory (int categoryId)
+        public List<Series> GetAllSeriesInCategory(int categoryId)
         {
-            List<CategorySeries> categorySeries= context.CategorieSeries.Include(s=>s.Series).Where(s=>s.CategoryID == categoryId).ToList();
+            List<CategorySeries> categorySeries = context.CategorieSeries.Include(s => s.Series).Include(s=>s.Series.Director).Include(s=>s.Series.Seasons).Where(s => s.CategoryID == categoryId).ToList();
             List<Series> series = new List<Series>();
 
             foreach (var category in categorySeries)
@@ -30,9 +30,11 @@ namespace Movies.Repositories.SeriesCategoryRepo
 
         }
 
+
+
         public bool IsCategoryFound(int CategoryId)
         {
-            CategorySeries categorySeries = context.CategorieSeries.FirstOrDefault(cs=>cs.CategoryID == CategoryId);
+            CategorySeries categorySeries = context.CategorieSeries.FirstOrDefault(cs => cs.CategoryID == CategoryId);
 
             if (categorySeries == null)
             {
@@ -44,7 +46,26 @@ namespace Movies.Repositories.SeriesCategoryRepo
             }
         }
 
-      
+
+
+        public bool IsSeriesFoundInCategory(int SeriesId, int CategoryId)
+        {
+            CategorySeries categorySeries = context.CategorieSeries.FirstOrDefault(cs => cs.CategoryID == CategoryId && cs.SeriesID == SeriesId);
+            if (categorySeries == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+
+        }
+       
+
+
+
+
         public bool DeleteCategorySeries(int CategorySeriesId)
         {
             CategorySeries categorySeries = context.CategorieSeries.FirstOrDefault(cs => cs.Id == CategorySeriesId);

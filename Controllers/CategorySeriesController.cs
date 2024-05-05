@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Movies.DTOs;
 using Movies.Models;
 using Movies.Repositories.CategoryRepo;
+using Movies.Repositories.DirectorRepo;
 using Movies.Repositories.SeriesCategoryRepo;
 using Movies.Repositories.SeriesRepo;
 
@@ -15,12 +16,14 @@ namespace Movies.Controllers
         private readonly ICategoryRepository categoryRepository;
         private readonly ISeriesRepository seriesRepository;
         private readonly ISeriesCategoryRepository seriesCategoryRepository;
-
-        public CategorySeriesController(ICategoryRepository categoryRepository, ISeriesRepository seriesRepository , ISeriesCategoryRepository seriesCategoryRepository) 
+        private readonly IDirectorRepository directorRepository;
+        public CategorySeriesController(ICategoryRepository categoryRepository, ISeriesRepository seriesRepository , ISeriesCategoryRepository seriesCategoryRepository , IDirectorRepository directorRepository) 
         {
             this.categoryRepository = categoryRepository;
             this.seriesRepository = seriesRepository;
             this.seriesCategoryRepository = seriesCategoryRepository;
+            this.directorRepository = directorRepository;
+
         }
 
         [HttpPost("{SeriesId:int}/{CategoryId:int}")]
@@ -32,6 +35,11 @@ namespace Movies.Controllers
 
             if (category != null && series != null )
             {
+                bool IsSeriesFound= seriesCategoryRepository.IsSeriesFoundInCategory(SeriesId,CategoryId);
+                if (IsSeriesFound)
+                {
+                    return new GeneralResponse() { IsSuccess = false, Data = "Series Already Exist" };
+                }
                 CategorySeries categorySeries = new CategorySeries()
                 {
                     CategoryID = CategoryId,
@@ -42,7 +50,7 @@ namespace Movies.Controllers
                 seriesCategoryRepository.Insert(categorySeries);
                 seriesCategoryRepository.Save();
 
-                return new GeneralResponse() { IsSuccess = false, Data = categorySeries };
+                return new GeneralResponse() { IsSuccess = true, Data = "Add Successfully" };
 
 
             }
@@ -68,7 +76,34 @@ namespace Movies.Controllers
             if (CategoryFound)
             {
                 List<Series> series = seriesCategoryRepository.GetAllSeriesInCategory(CategoryId);
-                return new GeneralResponse() { IsSuccess = true, Data = series };
+                List<SeriesToGetDTO> seriesDTO = new List<SeriesToGetDTO>();
+                foreach (var item in series)
+                {
+                    SeriesToGetDTO seriesToGetDTO = new SeriesToGetDTO()
+                    {
+                        Id = item.Id,
+                        CreatedYear = item.CreatedYear,
+                        Description = item.Description,
+                        DirectorID = item.DirectorID,
+                        FilmSection = item.FilmSection,
+                        LengthMinutes = item.LengthMinutes,
+                        PosterImage = item.PosterImage,
+                        Quality = item.Quality,
+                        Revenue = item.Revenue,
+                        Title = item.Title,
+                       DirectorName=item.Director.Name,
+                        Seasons = item.Seasons.Select(season => new SeasonsDTO
+                        {
+                            NumOfEpisodes = season.NumOfEpisodes,
+                            Name = season.Name,
+                            SeriesID = season.SeriesID // Assuming you want to include the SeriesID in each SeasonDTO
+                        }).ToList(),
+
+                    };
+                    
+                    seriesDTO.Add(seriesToGetDTO);
+                }
+                return new GeneralResponse() { IsSuccess = true, Data = seriesDTO };
             }
             else
             {
@@ -113,11 +148,22 @@ namespace Movies.Controllers
                 }
                 else
                 {
-                    categorySeries.SeriesID = categorySeriesDTO.SeriesId;
-                    categorySeries.CategoryID = categorySeriesDTO.CategoryId;
-                    seriesCategoryRepository.Update(categorySeries);
-                    seriesCategoryRepository.Save();
-                    return new GeneralResponse() { IsSuccess = true, Data = "Updated Successfully" };
+                    Category category = categoryRepository.GetById(categorySeriesDTO.CategoryId);
+                    Series series = seriesRepository.GetById(categorySeriesDTO.SeriesId);
+                    if (series != null && category !=null)
+                    {
+                        categorySeries.SeriesID = categorySeriesDTO.SeriesId;
+                        categorySeries.CategoryID = categorySeriesDTO.CategoryId;
+
+                        seriesCategoryRepository.Update(categorySeries);
+                        seriesCategoryRepository.Save();
+                        return new GeneralResponse() { IsSuccess = true, Data = "Updated Successfully" };
+
+                    }
+                    else
+                    {
+                        return new GeneralResponse() { IsSuccess = false, Data = "Invalid Data" };
+                    }
                 }
             }
             else
