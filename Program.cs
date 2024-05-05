@@ -101,8 +101,7 @@ namespace Movies
                         builder.WithOrigins("http://localhost:3000")
                                .AllowAnyOrigin()
                                .AllowAnyMethod()
-                               .AllowAnyHeader()
-                               .AllowCredentials();
+                               .AllowAnyHeader();
                     });
             });
 
