@@ -93,6 +93,7 @@ namespace Movies
             });
 
 
+
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAllOrigins",
@@ -104,6 +105,7 @@ namespace Movies
                                .AllowAnyHeader();
                     });
             });
+
 
 
             //        builder.Services.AddControllers()
