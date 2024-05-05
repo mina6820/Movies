@@ -49,7 +49,7 @@ namespace Movies.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public ActionResult<dynamic> GetAllActors()
         {
             List<Actor> actors = ActorRepository.GetAll();

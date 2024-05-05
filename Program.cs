@@ -93,6 +93,7 @@ namespace Movies
             });
 
 
+
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAllOrigins",
@@ -101,10 +102,10 @@ namespace Movies
                         builder.WithOrigins("http://localhost:3000")
                                .AllowAnyOrigin()
                                .AllowAnyMethod()
-                               .AllowAnyHeader()
-                               .AllowCredentials();
+                               .AllowAnyHeader();
                     });
             });
+
 
 
             //        builder.Services.AddControllers()
