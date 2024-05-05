@@ -7,6 +7,7 @@
         public int SeriesId { get; set; }
         public string SeriesName { get; set; }
 
+        public string? SeriesDescription { get; set; }
         public string SeriesImage { get; set; }
     }
 }

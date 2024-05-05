@@ -17,9 +17,10 @@ namespace Movies.Repositories.FavSeriesRepo
             return _context.FavouriteSeries.Include(f=>f.Series).Where(fav => fav.UserID == userId).ToList();
         }
 
-       public bool IsFavorite(int FavId)
+       public bool IsFavorite(int FavSeriesId,string UserLogginedId)
         {
-            FavouriteSeries favouriteSeries = GetById(FavId);
+            FavouriteSeries favouriteSeries =  _context.FavouriteSeries.FirstOrDefault(fav=>fav.SeriesID== FavSeriesId && fav.UserID== UserLogginedId);
+           
             if (favouriteSeries == null)
             {
                 return false;
