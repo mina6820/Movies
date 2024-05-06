@@ -30,6 +30,25 @@ namespace Movies.Repositories.SeriesCategoryRepo
 
         }
 
+        public bool GetCategoriesAndSeries(int CategoryId, int SeriesId)
+        {
+            Category category  = context.Categories.FirstOrDefault(c => c.Id == CategoryId);
+            Series series = context.Series.FirstOrDefault(s => s.Id == SeriesId);
+
+            if (category != null && series != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public CategorySeries GetCategorySeries(int CategoryId,int SeriesId) 
+        {
+            return context.CategorieSeries.FirstOrDefault(cs => cs.CategoryID == CategoryId && cs.SeriesID == SeriesId);
+        }
 
 
         public bool IsCategoryFound(int CategoryId)
