@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Movies.DTOs;
 using Movies.Models;
+using Movies.Repositories.CategoryMovieRepo;
 using Movies.Repositories.CategoryRepo;
+using Movies.Repositories.MovieRepo;
 using TestingMVC.Repo;
 
 namespace Movies.Controllers
@@ -13,10 +15,14 @@ namespace Movies.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryRepository categoryRepository;
+        private readonly ICategoryMovieRepository categoryMovieRepository;
+        private readonly IMovieRepository movieRepository;
 
-        public CategoryController(ICategoryRepository categoryRepository)
+        public CategoryController(ICategoryRepository categoryRepository , ICategoryMovieRepository categoryMovieRepository, IMovieRepository movieRepository)
         {
             this.categoryRepository = categoryRepository;
+            this.categoryMovieRepository = categoryMovieRepository;
+            this.movieRepository = movieRepository;
         }
 
         [HttpPost]
@@ -75,17 +81,26 @@ namespace Movies.Controllers
             return new GeneralResponse() { IsSuccess = true, Data = categoryfromDb};
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public ActionResult<GeneralResponse> DeleteCategory(int id)
         {
-            Category? category = categoryRepository.GetCategoryById(id);
-            if(category == null)
+            Category category = categoryRepository.GetCategoryById(id);
+            if (category == null)
                 return new GeneralResponse() { IsSuccess = false, Data = $"No Category With ID : {id}" };
 
+            List<Movie> moviesDb = categoryMovieRepository.GetMoviesByCategoryId(id);
+            foreach (Movie movie in moviesDb)
+            {
+                movie.IsDeleted = true;
+                movieRepository.Save(); // Save changes to each movie
+            }
+
             category.IsDeleted = true;
-            categoryRepository.Save();
+            categoryRepository.Save(); // Save changes to the category
+
             return new GeneralResponse() { IsSuccess = true, Data = "Deleted Successfully" };
         }
+
 
     }
 

@@ -20,21 +20,21 @@ namespace Movies.Controllers
         }
 
         [HttpPost]
-        public ActionResult<dynamic> AddActor(ActorDTO actorDTO)
+        public ActionResult<dynamic> AddActor(ActorForAddDTO actorForAddDTO)
         {
             if (ModelState.IsValid)
             {
                 Actor actor = new Actor()
                 {
-                    Age = actorDTO.Age,
-                    ID = actorDTO.ID,
-                    Image = actorDTO.Image,
-                    Name = actorDTO.Name,
-                    Overview = actorDTO.Overview
+                    Age = actorForAddDTO.Age,
+                    
+                    Image = actorForAddDTO.Image,
+                    Name = actorForAddDTO.Name,
+                    Overview = actorForAddDTO.Overview
                 };
                 ActorRepository.Insert(actor);
                 ActorRepository.Save();
-                return new GeneralResponse() { IsSuccess = true, Data = actor };
+                return new GeneralResponse() { IsSuccess = true, Data = actorForAddDTO };
             }
             else
             {
@@ -49,7 +49,7 @@ namespace Movies.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public ActionResult<dynamic> GetAllActors()
         {
             List<Actor> actors = ActorRepository.GetAll();
@@ -161,7 +161,7 @@ namespace Movies.Controllers
                 actor.IsDeleted = true;
                 ActorRepository.Delete(id);
                 ActorRepository.Save();
-                return new GeneralResponse() { IsSuccess = true, Data = actor };
+                return new GeneralResponse() { IsSuccess = true, Data = "Deleted Successfully" };
             }
             else
             {
@@ -177,7 +177,7 @@ namespace Movies.Controllers
 
         [HttpPut]
         [Route("{id}")]
-        public ActionResult<dynamic> EditActor(int id,ActorDTO actorDTO)
+        public ActionResult<dynamic> EditActor(int id,ActorForAddDTO actorForAddDTO)
         {
             Actor ReturnedActor = ActorRepository.GetById(id);
             if (ReturnedActor == null)
@@ -190,14 +190,14 @@ namespace Movies.Controllers
             }
             else
             {
-                ReturnedActor.ID = actorDTO.ID;
-                ReturnedActor.Name = actorDTO.Name;
-                ReturnedActor.Image = actorDTO.Image;
-                ReturnedActor.Overview = actorDTO.Overview;
+                
+                ReturnedActor.Name = actorForAddDTO.Name;
+                ReturnedActor.Image = actorForAddDTO.Image;
+                ReturnedActor.Overview = actorForAddDTO.Overview;
                 ActorRepository.Update(ReturnedActor);
                 ActorRepository.Save();
 
-                return new GeneralResponse() { IsSuccess = true, Data = actorDTO };
+                return new GeneralResponse() { IsSuccess = true, Data = actorForAddDTO };
             }
         }
     }

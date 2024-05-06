@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -45,12 +46,16 @@ namespace Movies.Controllers
                 {
                     return new GeneralResponse { IsSuccess = true, Data= "Account Created" };;
                 }
-                return BadRequest(result.Errors);
+                return new GeneralResponse { IsSuccess = false, Data = result.Errors }; ;
+
+                //return BadRequest(result.Errors);
             }
-            return BadRequest(ModelState);
+            return new GeneralResponse { IsSuccess = false, Data = ModelState }; ;
+
+            //return BadRequest(ModelState);
         }
         [HttpPost("Login")]
-        public async Task<IActionResult> Login(UserLoginDTO userDto)
+        public async Task<ActionResult<dynamic>> Login(UserLoginDTO userDto)
         {
             if (ModelState.IsValid)
             {
@@ -87,16 +92,35 @@ namespace Movies.Controllers
                             expires: DateTime.Now.AddHours(1),
                             claims: myclaims,
                             signingCredentials: signingCredentials);
-                        return Ok(new
+                        return new GeneralResponse()
                         {
-                            token = new JwtSecurityTokenHandler().WriteToken(mytoken),
-                            expired = mytoken.ValidTo
-                        });
+                            IsSuccess = true,
+                            Data = new
+                            {
+                                token = new JwtSecurityTokenHandler().WriteToken(mytoken),
+                                expired = mytoken.ValidTo,
+                            }
+                        };
+
+                        //return Ok(new
+                        //{
+                        //    token = new JwtSecurityTokenHandler().WriteToken(mytoken),
+                        //    expired = mytoken.ValidTo
+                        //});
                     }
                 }
-                return Unauthorized("Invalid account");
+                return new GeneralResponse() { 
+                    IsSuccess=false,
+                    Data = Unauthorized("Invalid account")
+            };
+                //return Unauthorized("Invalid account");
             }
-            return BadRequest(ModelState);
+            return new GeneralResponse()
+            {
+                IsSuccess = false,
+                Data = ModelState
+            };
+            //return BadRequest(ModelState);
         }
 
     }

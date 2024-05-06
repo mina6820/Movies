@@ -26,5 +26,7 @@ namespace Movies.Repositories.CategoryRepo
         {
             return context.Categories.Where(c => c.Name.Contains(name) && c.IsDeleted == false).ToList();
         }
+
+
     }
 }

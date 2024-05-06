@@ -7,6 +7,9 @@ using Movies.Repositories.MovieRepo;
 using TestingMVC.Repo;
 using Movies.Repositories.ActroRepo;
 using Movies.Repositories.DirectorRepo;
+
+using Movies.Repositories.CategoryMovieRepo;
+
 using Movies.Repositories.FavMovieRepo;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -23,6 +26,7 @@ using Movies.Repositories.MovieCommentRepo;
 using Movies.Repositories.SeriesCommentRepo;
 
 using Movies.Repositories.FavSeriesRepo;
+using Movies.Repositories.SeriesCategoryRepo;
 
 
 namespace Movies
@@ -47,6 +51,7 @@ namespace Movies
 
             builder.Services.AddScoped<ICategoryRepository , CategoryRepository>();
             builder.Services.AddScoped<IMovieRepository , MovieRepository>();
+            builder.Services.AddScoped<ICategoryMovieRepository , CategoryMovieRepository>();
 
             builder.Services.AddScoped<IActorRepository, ActorRepository>();
             builder.Services.AddScoped<IDirectorRepository, DirectorRepository>();
@@ -59,8 +64,13 @@ namespace Movies
 
             builder.Services.AddScoped<IMovie_LikeRepo,MovieLikeRepository>();
             builder.Services.AddScoped<ISeries_LikeRepo,SeriesLikeRepo>();
+
             builder.Services.AddScoped<IMovie_CommentRepo,MovieCommentRepository>();
             builder.Services.AddScoped<ISeries_CommentRepo,SeriesCommentRepository>();
+
+
+            builder.Services.AddScoped<ISeriesCategoryRepository,SeriesCategoryRepository>();
+
             // IHttpContextAccessor
          //   builder.Services.AddScoped<IHttpContextAccessor>();
 
@@ -89,11 +99,27 @@ namespace Movies
                 };
             });
 
-    //        builder.Services.AddControllers()
-    //.AddJsonOptions(options =>
-    //{
-    //    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
-    //});
+
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins",
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:3000")
+                               .AllowAnyOrigin()
+                               .AllowAnyMethod()
+                               .AllowAnyHeader();
+                    });
+            });
+
+
+
+            //        builder.Services.AddControllers()
+            //.AddJsonOptions(options =>
+            //{
+            //    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+            //});
 
             /*-----------------------------Swagger PArt-----------------------------*/
             #region Swagger REgion
@@ -149,7 +175,7 @@ namespace Movies
             }
 
             app.UseAuthorization();
-
+            app.UseCors("AllowAllOrigins");
 
             app.MapControllers();
 
