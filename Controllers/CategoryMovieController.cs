@@ -5,6 +5,8 @@ using Movies.Models;
 using Movies.Repositories.CategoryMovieRepo;
 using Movies.Repositories.CategoryRepo;
 using Movies.Repositories.MovieRepo;
+using Movies.Repositories.SeriesCategoryRepo;
+using Movies.Repositories.SeriesRepo;
 
 namespace Movies.Controllers
 {
@@ -89,6 +91,74 @@ namespace Movies.Controllers
             }
             return new GeneralResponse() { IsSuccess = true, Data = movies };
         }
+
+        [HttpDelete]
+        [Route("{CategoryId:int}/{MovieId:int}")]
+        public ActionResult<GeneralResponse> DeleteMovieFromCategory(int CategoryId, int MovieId)
+        {
+            Category category = categoryRepository.GetCategoryById(CategoryId);
+            Movie movie = movieRepository.GetById(MovieId);
+
+            if (category != null && movie != null)
+            {
+                bool IsSeriesFound = categoryMovieRepository.IsMovieFoundInCategory(MovieId, CategoryId);
+                if (IsSeriesFound)
+                {
+                    categoryMovieRepository.DeleteMovieFromCategory(CategoryId, MovieId);
+                    return new GeneralResponse() { IsSuccess = true, Data = "Movie Deleted Successfully ): " };
+
+                }
+                else
+                {
+                    return new GeneralResponse() { IsSuccess = false, Data = "Movie Not In this Category ): " };
+                    }
+            }
+            else
+            {
+                return new GeneralResponse() { IsSuccess = false, Data = "Invalid Data ): " };
+            }
+        }
+
+
+
+        [HttpPut("{CategoryMovieId:int}")]
+
+        public ActionResult<dynamic> EditCategorySeries(int CategoryMovieId, CategoryMovieDTO categoryMovieDTO)
+        {
+            if (ModelState.IsValid)
+            {
+                CategoryMovie categoryMovie = categoryMovieRepository.GetById(CategoryMovieId);
+                if (categoryMovie == null)
+                {
+                    return new GeneralResponse() { IsSuccess = false, Data = "Invalid Category Series" };
+                }
+                else
+                {
+                    Category category = categoryRepository.GetById(categoryMovieDTO.CategoryId);
+                    Movie movie = movieRepository.GetById(categoryMovieDTO.MovieId);
+                    if (movie != null && category != null)
+                    {
+                        categoryMovie.MovieID = categoryMovieDTO.MovieId;
+                        categoryMovie.CategoryID = categoryMovieDTO.CategoryId;
+
+                        categoryMovieRepository.Update(categoryMovie);
+                        categoryMovieRepository.Save();
+                        return new GeneralResponse() { IsSuccess = true, Data = "Updated Successfully" };
+
+                    }
+                    else
+                    {
+                        return new GeneralResponse() { IsSuccess = false, Data = "Invalid Data" };
+                    }
+                }
+            }
+            else
+            {
+                return new GeneralResponse() { IsSuccess = false, Data = " Updated Failed " };
+            }
+
+        }
+
 
 
 

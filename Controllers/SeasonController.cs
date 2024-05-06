@@ -21,7 +21,7 @@ namespace Movies.Controllers
         [HttpGet]
         public ActionResult<dynamic> GetAll()
         {
-            List<Season> seasons = seasonsRepo.GetAll();
+            List<Season> seasons = seasonsRepo.GetAllSeasonsWithSeries();
             if (seasons == null)
             {
                 return new GeneralResponse()
@@ -32,10 +32,23 @@ namespace Movies.Controllers
             }
             else
             {
+                List<SeasonToGetDTO> SeasonsDTO = new List<SeasonToGetDTO>();
+                foreach (var season in seasons)
+                {
+                    SeasonToGetDTO seasonToGetDTO = new SeasonToGetDTO() { 
+                        Id = season.Id,
+                        Name = season.Name,
+                        NumOfEpisodes = season.NumOfEpisodes,
+                        SeriesID = season.SeriesID,
+                        SeriesName = season.Series.Title,
+                    };
+
+                    SeasonsDTO.Add(seasonToGetDTO);
+                }
                 return new GeneralResponse()
                 {
                     IsSuccess = true,
-                    Data = seasons
+                    Data = SeasonsDTO
                 };
             }
         }
@@ -65,13 +78,20 @@ namespace Movies.Controllers
         [HttpGet("{id:int}")]
         public ActionResult<dynamic> GetSes(int id) {
         
-            Season season = seasonsRepo.GetById(id);
+            Season season = seasonsRepo.GetSeasonWithSeries(id);
             if (season == null)
             {
                 return new GeneralResponse() { Data = "Not Found", IsSuccess = false };
             }else {
-
-                return new GeneralResponse() { IsSuccess = true, Data = season };
+                SeasonToGetDTO seasonToGetDTO = new SeasonToGetDTO()
+                {
+                    Id = season.Id,
+                    Name = season.Name,
+                    NumOfEpisodes = season.NumOfEpisodes,
+                    SeriesID = season.SeriesID,
+                    SeriesName = season.Series.Title,
+                };
+                return new GeneralResponse() { IsSuccess = true, Data = seasonToGetDTO };
             }
         }
         [HttpPost]
@@ -125,7 +145,7 @@ namespace Movies.Controllers
                 return new GeneralResponse()
                 {
                     IsSuccess = true,
-                    Data = season
+                    Data = "Updated Successfully"
                 };
             }
         

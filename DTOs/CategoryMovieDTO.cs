@@ -1,8 +1,10 @@
 ﻿namespace Movies.DTOs
 {
-    public class FavMovieDTO
+    public class CategoryMovieDTO
     {
-        public string UserId { get; set; }
+        public int CategoryId { get; set; }
+
         public int MovieId { get; set; }
+
     }
 }

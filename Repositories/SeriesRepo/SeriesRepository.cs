@@ -22,5 +22,10 @@ namespace Movies.Repositories.SeriesRepo
         {
             return context.Series.Include(c=>c.Director).Where(c=>c.Director.Name.Contains(DirectorName)).ToList(); 
         }
+
+        public Series GetSeries(int SeriesId)
+        {
+            return context.Series.Include(s=>s.Seasons).Include(s=>s.Director).FirstOrDefault(s => s.Id == SeriesId);
+        }
     }
 }

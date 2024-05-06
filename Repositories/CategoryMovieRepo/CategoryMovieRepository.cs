@@ -22,6 +22,37 @@ namespace Movies.Repositories.CategoryMovieRepo
                     .ToList();
         }
 
+        public bool DeleteMovieFromCategory(int CategoryId, int MovieId)
+        {
+            CategoryMovie categoryMovie = context.CategorieMovies.FirstOrDefault(cs => cs.CategoryID == CategoryId && cs.MovieID == MovieId);
+            if (categoryMovie != null)
+            {
+                context.CategorieMovies.Remove(categoryMovie);
+                context.SaveChanges();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool IsMovieFoundInCategory(int MovieId, int CategoryId)
+        {
+            CategoryMovie categoryMovie = context.CategorieMovies.FirstOrDefault(cs => cs.CategoryID == CategoryId && cs.MovieID == MovieId);
+            if (categoryMovie == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+
+        }
+
+
+
 
     }
 }
