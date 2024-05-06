@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Movies.DTOs;
+using Movies.DTOs.ActorDTOs;
 using Movies.Models;
 using Movies.Repositories.ActorSeriesRepo;
+using Movies.Repositories.ActroRepo;
+using Movies.Repositories.SeriesRepo;
 
 namespace Movies.Controllers
 {
@@ -11,10 +14,121 @@ namespace Movies.Controllers
     public class ActorSeriesController : ControllerBase
     {
         private readonly IActorSeriesRepository actorSeriesRepository;
-        public ActorSeriesController(IActorSeriesRepository actorSeriesRepository) {
+        private readonly ISeriesRepository seriesRepository;
+        private readonly IActorRepository actorRepository;
+
+        public ActorSeriesController(IActorSeriesRepository actorSeriesRepository,ISeriesRepository seriesRepository,IActorRepository actorRepository) {
             
             this.actorSeriesRepository = actorSeriesRepository;
+            this.seriesRepository = seriesRepository;
+            this.actorRepository = actorRepository;
+
         }
+        [HttpGet("{SeriesId:int}")]
+        public ActionResult<dynamic> GetAllActorsInSeries(int SeriesId) {
+            List<Actor> actors= actorSeriesRepository.GetActors(SeriesId);
+            Series series= seriesRepository.GetSeries(SeriesId);
+            if (series == null)
+            {
+                return new GeneralResponse()
+                {
+                    IsSuccess = false,
+                    Data = "There is no series"
+                };
+            }
+            if (actors.Count==0)
+            {
+                return new GeneralResponse()
+                {
+                    IsSuccess = false,
+                    Data = "There is no actor in this series"
+                };
+            }
+            else
+            {
+                List<ActorDTO> actorDTOs = new List<ActorDTO>();
+                foreach (Actor actor in actors)
+                {
+                    ActorDTO actorDTO = new ActorDTO()
+                    {
+                        Age = actor.Age,
+                        ID = actor.ID,
+                        Image = actor.Image,
+                        Name = actor.Name,
+                        Overview = actor.Overview
+                    };
+                    actorDTOs.Add(actorDTO);
+                }
+                return new GeneralResponse()
+                {
+
+                    IsSuccess = true,
+                    Data = actorDTOs
+                };
+            }
+
+        }
+        [HttpGet("actor/{ActorID:int}")]
+        public ActionResult<dynamic> GetAllSeriesOfActor(int ActorID)
+        {
+            List<Series> series = actorSeriesRepository.GetSeriesOfActor(ActorID);
+            Actor actor=actorRepository.GetById(ActorID);
+            if (actor == null)
+            {
+                return new GeneralResponse()
+                {
+                    IsSuccess = false,
+                    Data = "There is no actor"
+                };
+            }
+            if (series.Count == 0)
+            {
+                return new GeneralResponse()
+                {
+                    IsSuccess = false,
+                    Data = "There is no series for this actor"
+                };
+            }
+            else
+            {
+                List<SeriesToGetDTO> seriesToGetDTOs=new List<SeriesToGetDTO>();
+                foreach (var item in series)
+                {
+                    SeriesToGetDTO seriesToGetDTO = new SeriesToGetDTO()
+                    {
+
+                        SeriesId = item.Id,
+                        CreatedYear = item.CreatedYear,
+                        Description = item.Description,
+                        DirectorID = item.DirectorID,
+                        FilmSection = item.FilmSection,
+                        LengthMinutes = item.LengthMinutes,
+                        PosterImage = item.PosterImage,
+                        Quality = item.Quality,
+                        Revenue = item.Revenue,
+                        Title = item.Title,
+                        DirectorName = item.Director.Name,
+                        Seasons = item.Seasons.Select(season => new SeasonsDTO
+                        {
+                            NumOfEpisodes = season.NumOfEpisodes,
+                            Name = season.Name,
+                            SeriesID = season.SeriesID // Assuming you want to include the SeriesID in each SeasonDTO
+                        }).ToList(),
+
+                    };
+
+                    seriesToGetDTOs.Add(seriesToGetDTO);
+                }
+                return new GeneralResponse()
+                {
+
+                    IsSuccess = true,
+                    Data = seriesToGetDTOs
+                };
+            }
+
+        }
+
 
         [HttpPost("{ActorId:int}/{SeriesId:int}")]
         public ActionResult<dynamic> AddActorToSeries(int ActorId , int SeriesId) 

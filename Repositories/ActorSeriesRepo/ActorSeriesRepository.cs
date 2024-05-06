@@ -1,4 +1,5 @@
 ﻿using Instagram_Clone.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Movies.Models;
 
 namespace Movies.Repositories.ActorSeriesRepo
@@ -69,7 +70,30 @@ namespace Movies.Repositories.ActorSeriesRepo
         {
           return  context.ActorSeries.FirstOrDefault(a => a.SeriesID == SeriesId && a.ActorID == ActorId);
         }  
-        
+         public List<Actor> GetActors(int SeriesId)
+        {
+            List<ActorSeries> actorSeries=context.ActorSeries.Include(s=>s.Actor).Where(SI=>SI.SeriesID==SeriesId).ToList();
+      
+        List<Actor> actors = new List<Actor>(); 
+            foreach(ActorSeries actorS in actorSeries)
+            {
+               Actor actor = actorS.Actor;
+                actors.Add(actor);
+            }
+            return actors;
+        }
+        public List<Series> GetSeriesOfActor(int ActorId)
+        {
+            List<ActorSeries> actorSeries = context.ActorSeries.Include(s => s.Series).Include(se=>se.Series.Seasons).Include(d=>d.Series.Director).Where(SI => SI.ActorID == ActorId).ToList();
+
+            List<Series> series = new List<Series>();
+            foreach (ActorSeries actorS in actorSeries)
+            {
+                Series seriesI = actorS.Series;
+                series.Add(seriesI);
+            }
+            return series;
+        }
 
     }
 
