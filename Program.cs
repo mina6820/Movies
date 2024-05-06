@@ -22,6 +22,8 @@ using Microsoft.OpenApi.Models;
 
 using Movies.Repositories.MovieLikeRepo;
 using Movies.Repositories.SeriesLikeRepo;
+using Movies.Repositories.MovieCommentRepo;
+using Movies.Repositories.SeriesCommentRepo;
 
 using Movies.Repositories.FavSeriesRepo;
 using Movies.Repositories.SeriesCategoryRepo;
@@ -63,7 +65,12 @@ namespace Movies
             builder.Services.AddScoped<IMovie_LikeRepo,MovieLikeRepository>();
             builder.Services.AddScoped<ISeries_LikeRepo,SeriesLikeRepo>();
 
+            builder.Services.AddScoped<IMovie_CommentRepo,MovieCommentRepository>();
+            builder.Services.AddScoped<ISeries_CommentRepo,SeriesCommentRepository>();
+
+
             builder.Services.AddScoped<ISeriesCategoryRepository,SeriesCategoryRepository>();
+
             // IHttpContextAccessor
          //   builder.Services.AddScoped<IHttpContextAccessor>();
 
