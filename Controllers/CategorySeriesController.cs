@@ -17,7 +17,7 @@ namespace Movies.Controllers
         private readonly ISeriesRepository seriesRepository;
         private readonly ISeriesCategoryRepository seriesCategoryRepository;
         private readonly IDirectorRepository directorRepository;
-        public CategorySeriesController(ICategoryRepository categoryRepository, ISeriesRepository seriesRepository , ISeriesCategoryRepository seriesCategoryRepository , IDirectorRepository directorRepository) 
+        public CategorySeriesController(ICategoryRepository categoryRepository, ISeriesRepository seriesRepository, ISeriesCategoryRepository seriesCategoryRepository, IDirectorRepository directorRepository)
         {
             this.categoryRepository = categoryRepository;
             this.seriesRepository = seriesRepository;
@@ -28,14 +28,14 @@ namespace Movies.Controllers
 
         [HttpPost("{SeriesId:int}/{CategoryId:int}")]
 
-        public ActionResult<dynamic> AddSeriesToCategory(int SeriesId , int CategoryId )
+        public ActionResult<dynamic> AddSeriesToCategory(int SeriesId, int CategoryId)
         {
-           Category category = categoryRepository.GetCategoryById(CategoryId);
+            Category category = categoryRepository.GetCategoryById(CategoryId);
             Series series = seriesRepository.GetById(SeriesId);
 
-            if (category != null && series != null )
+            if (category != null && series != null)
             {
-                bool IsSeriesFound= seriesCategoryRepository.IsSeriesFoundInCategory(SeriesId,CategoryId);
+                bool IsSeriesFound = seriesCategoryRepository.IsSeriesFoundInCategory(SeriesId, CategoryId);
                 if (IsSeriesFound)
                 {
                     return new GeneralResponse() { IsSuccess = false, Data = "Series Already Exist" };
@@ -66,13 +66,13 @@ namespace Movies.Controllers
         {
 
             Category category = categoryRepository.GetCategoryById(CategoryId);
-            if(category ==null)
+            if (category == null)
             {
                 return new GeneralResponse() { IsSuccess = false, Data = "Invalid Category" };
             }
 
             bool CategoryFound = seriesCategoryRepository.IsCategoryFound(CategoryId);
-               
+
             if (CategoryFound)
             {
                 List<Series> series = seriesCategoryRepository.GetAllSeriesInCategory(CategoryId);
@@ -81,7 +81,7 @@ namespace Movies.Controllers
                 {
                     SeriesToGetDTO seriesToGetDTO = new SeriesToGetDTO()
                     {
-                       
+
                         SeriesId = item.Id,
                         CreatedYear = item.CreatedYear,
                         Description = item.Description,
@@ -92,7 +92,7 @@ namespace Movies.Controllers
                         Quality = item.Quality,
                         Revenue = item.Revenue,
                         Title = item.Title,
-                        DirectorName=item.Director.Name,
+                        DirectorName = item.Director.Name,
                         Seasons = item.Seasons.Select(season => new SeasonsDTO
                         {
                             NumOfEpisodes = season.NumOfEpisodes,
@@ -101,7 +101,7 @@ namespace Movies.Controllers
                         }).ToList(),
 
                     };
-                    
+
                     seriesDTO.Add(seriesToGetDTO);
                 }
                 return new GeneralResponse() { IsSuccess = true, Data = seriesDTO };
@@ -110,7 +110,7 @@ namespace Movies.Controllers
             {
                 return new GeneralResponse() { IsSuccess = false, Data = "Category is not Exist" };
             }
-          
+
         }
 
         [HttpDelete]
@@ -125,7 +125,7 @@ namespace Movies.Controllers
                 bool IsSeriesFound = seriesCategoryRepository.IsSeriesFoundInCategory(SeriesId, CategoryId);
                 if (IsSeriesFound)
                 {
-                    seriesCategoryRepository.DeleteSeriesFromCategory( CategoryId, SeriesId);
+                    seriesCategoryRepository.DeleteSeriesFromCategory(CategoryId, SeriesId);
                     return new GeneralResponse() { IsSuccess = true, Data = "Series Deleted Successfully ): " };
 
                 }
@@ -135,49 +135,76 @@ namespace Movies.Controllers
 
                 }
             }
-            else {
+            else
+            {
                 return new GeneralResponse() { IsSuccess = false, Data = "Invalid Data ): " };
             }
         }
 
-        [HttpPut("{CategorySeriesId:int}")]
+        [HttpPut("{CategoryId:int}/{SeriesId:int}")]
 
-        public ActionResult<dynamic> EditCategorySeries(int CategorySeriesId , CategorySeriesDTO categorySeriesDTO)
+        public ActionResult<dynamic> EditCategorySeries(int CategoryId, int SeriesId, CategorySeriesDTO categorySeriesDTO)
         {
             if (ModelState.IsValid)
             {
-                CategorySeries categorySeries = seriesCategoryRepository.GetById(CategorySeriesId);
-                if (categorySeries == null)
+                bool IsFoundInDB = seriesCategoryRepository.GetCategoriesAndSeries(CategoryId, SeriesId);
+                if (IsFoundInDB)
                 {
-                    return new GeneralResponse() { IsSuccess = false, Data = "Invalid Category Series" };
-                }
-                else
-                {
-                    Category category = categoryRepository.GetById(categorySeriesDTO.CategoryId);
-                    Series series = seriesRepository.GetById(categorySeriesDTO.SeriesId);
-                    if (series != null && category !=null)
-                    {
-                        categorySeries.SeriesID = categorySeriesDTO.SeriesId;
-                        categorySeries.CategoryID = categorySeriesDTO.CategoryId;
+                    bool IsSeriesInCategory = seriesCategoryRepository.IsSeriesFoundInCategory(SeriesId, CategoryId);
 
-                        seriesCategoryRepository.Update(categorySeries);
-                        seriesCategoryRepository.Save();
-                        return new GeneralResponse() { IsSuccess = true, Data = "Updated Successfully" };
+                    if (IsSeriesInCategory)
+                    {
+                        bool IsFoundInDTO = seriesCategoryRepository.IsSeriesFoundInCategory( categorySeriesDTO.SeriesId, categorySeriesDTO.CategoryId);
+                        if (!IsFoundInDTO)
+                        {
+                            CategorySeries categorySeries = seriesCategoryRepository.GetCategorySeries(CategoryId, SeriesId);
+
+                            categorySeries.SeriesID = categorySeriesDTO.SeriesId;
+                            categorySeries.CategoryID = categorySeriesDTO.CategoryId;
+                            seriesCategoryRepository.Update(categorySeries);
+                            seriesCategoryRepository.Save();
+                            return new GeneralResponse()
+                            {
+                                IsSuccess = true,
+                                Data = categorySeries
+                            };
+                        }
+                        else
+                        {
+                            return new GeneralResponse()
+                            {
+                                IsSuccess = false,
+                                Data = "series Already Exist In This Category"
+                            };
+                        }
 
                     }
                     else
                     {
-                        return new GeneralResponse() { IsSuccess = false, Data = "Invalid Data" };
+                        return new GeneralResponse()
+                        {
+                            IsSuccess = false,
+                            Data = "Series Already Exist"
+                        };
                     }
                 }
+                else
+                {
+                    return new GeneralResponse()
+                    {
+                        IsSuccess = false,
+                        Data = "Updated Failed"
+                    };
+                }
+
             }
+
             else
             {
-                return new GeneralResponse() { IsSuccess = false, Data = " Updated Failed " };
+                return new GeneralResponse() { IsSuccess = false, Data = " Invalid Data " };
             }
 
+
         }
-
-
     }
 }
