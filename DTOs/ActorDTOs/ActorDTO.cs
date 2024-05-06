@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Movies.DTOs
+namespace Movies.DTOs.ActorDTOs
 {
     public class ActorDTO
     {
@@ -10,6 +10,6 @@ namespace Movies.DTOs
         public string Name { get; set; }
         public string? Age { get; set; }
         public string? Image { get; set; }
-        public String? Overview { get; set; }
+        public string? Overview { get; set; }
     }
 }

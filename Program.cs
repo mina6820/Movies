@@ -13,11 +13,17 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Movies.Authentication;
+using Movies.Repositories.SeriesRepo;
+using Movies.Repositories.SeasonsRepo;
 using Microsoft.OpenApi.Models;
+
 using Movies.Repositories.MovieLikeRepo;
 using Movies.Repositories.SeriesLikeRepo;
 using Movies.Repositories.MovieCommentRepo;
 using Movies.Repositories.SeriesCommentRepo;
+
+using Movies.Repositories.FavSeriesRepo;
+
 
 namespace Movies
 {
@@ -45,6 +51,11 @@ namespace Movies
             builder.Services.AddScoped<IActorRepository, ActorRepository>();
             builder.Services.AddScoped<IDirectorRepository, DirectorRepository>();
             builder.Services.AddScoped<IFavMovieRepository, FavMovieRepository>();
+            builder.Services.AddScoped<IFavSeriesRepository, FavSeriesRepository>();
+
+            builder.Services.AddScoped<ISeriesRepository, SeriesRepository>();
+            builder.Services.AddScoped<ISeasonsRepo, SeasonsRepo>();
+
 
             builder.Services.AddScoped<IMovie_LikeRepo,MovieLikeRepository>();
             builder.Services.AddScoped<ISeries_LikeRepo,SeriesLikeRepo>();
@@ -78,20 +89,26 @@ namespace Movies
                 };
             });
 
+    //        builder.Services.AddControllers()
+    //.AddJsonOptions(options =>
+    //{
+    //    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    //});
+
             /*-----------------------------Swagger PArt-----------------------------*/
             #region Swagger REgion
             //builder.Services.AddSwaggerGen();
 
             builder.Services.AddSwaggerGen(swagger =>
             {
-                //This is to generate the Default UI of Swagger Documentation    
+                //ThisÂ isÂ toÂ generateÂ theÂ DefaultÂ UIÂ ofÂ SwaggerÂ DocumentationÂ Â Â Â 
                 swagger.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "ASP.NET 5 Web API",
+                    Title = "ASP.NETÂ 5Â WebÂ API",
                     Description = " ITI Projrcy"
                 });
-                // To Enable authorization using Swagger (JWT)    
+                //Â ToÂ EnableÂ authorizationÂ usingÂ SwaggerÂ (JWT)Â Â Â Â 
                 swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
                 {
                     Name = "Authorization",
@@ -99,7 +116,7 @@ namespace Movies
                     Scheme = "Bearer",
                     BearerFormat = "JWT",
                     In = ParameterLocation.Header,
-                    Description = "Enter 'Bearer' [space] and then your valid token in the text input below.\r\n\r\nExample: \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\"",
+                    Description = "EnterÂ 'Bearer'Â [space]Â andÂ thenÂ yourÂ validÂ tokenÂ inÂ theÂ textÂ inputÂ below.\r\n\r\nExample:Â \"BearerÂ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\"",
                 });
                 swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
