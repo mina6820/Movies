@@ -45,5 +45,35 @@ namespace Movies.Repositories.ActorSeriesRepo
                 return false;
             }
         }
+
+
+        public bool DeleteActorFromSeries(int ActorId, int SeriesId)
+        {
+            bool IsFound = IsActorInSeries(ActorId, SeriesId);
+            if (IsFound)
+            {
+                ActorSeries actorSeries = context.ActorSeries
+                    .FirstOrDefault(a => a.ActorID == ActorId && a.SeriesID==SeriesId);
+                context.ActorSeries.Remove(actorSeries);
+                Save();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+
+        public ActorSeries GetActorSeries(int ActorId , int SeriesId)
+        {
+          return  context.ActorSeries.FirstOrDefault(a => a.SeriesID == SeriesId && a.ActorID == ActorId);
+        }  
+        
+
     }
+
+
+
+
 }

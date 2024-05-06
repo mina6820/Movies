@@ -61,10 +61,6 @@ namespace Movies.Repositories.SeriesCategoryRepo
             }
 
         }
-       
-
-
-
 
         public bool DeleteCategorySeries(int CategorySeriesId)
         {
