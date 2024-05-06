@@ -7,5 +7,6 @@ namespace Movies.Repositories.SeriesRepo
     {
         public List<Series> GetAllSeriesOfDirector(int directorId);
         public List<Series> Search(string DirectorName);
+        public Series GetSeries(int SeriesId);
     }
 }

@@ -46,26 +46,49 @@ namespace Movies.Controllers
         //    }
 
         //}
-        //[HttpGet("{id:int}")]
-        //public ActionResult<dynamic> GetSeriesById(int id)
-        //{
-        //    Series series= _seriesRepository.GetById(id);
-        //    if(series == null) {
-        //        return new GeneralResponse()
-        //        {
-        //            IsSuccess = false,
-        //            Data = "There is no data"
-        //        };
-        //    }
-        //    else
-        //    {
-        //        return new GeneralResponse()
-        //        {
-        //            IsSuccess = true,
-        //            Data = series
-        //        };
-        //    }
-        //}
+        [HttpGet("{id:int}")]
+        public ActionResult<dynamic> GetSeriesById(int id)
+        {
+            Series series = _seriesRepository.GetSeries(id);
+            if (series == null)
+            {
+                return new GeneralResponse()
+                {
+                    IsSuccess = false,
+                    Data = "There is no data"
+                };
+            }
+            else
+            {
+                SeriesToGetDTO seriesToGetDTO = new SeriesToGetDTO()
+                {
+
+                    SeriesId = series.Id,
+                    CreatedYear = series.CreatedYear,
+                    Description = series.Description,
+                    DirectorID = series.DirectorID,
+                    FilmSection = series.FilmSection,
+                    LengthMinutes = series.LengthMinutes,
+                    PosterImage = series.PosterImage,
+                    Quality = series.Quality,
+                    Revenue = series.Revenue,
+                    Title = series.Title,
+                    DirectorName = series.Director.Name,
+                    Seasons = series.Seasons.Select(season => new SeasonsDTO
+                    {
+                        NumOfEpisodes = season.NumOfEpisodes,
+                        Name = season.Name,
+                        SeriesID = season.SeriesID // Assuming you want to include the SeriesID in each SeasonDTO
+                    }).ToList(),
+
+                };
+                return new GeneralResponse()
+                {
+                    IsSuccess = true,
+                    Data = seriesToGetDTO
+                };
+            }
+        }
         [HttpPost]
         public ActionResult<dynamic> AddSeries(SeriesDTO seriesDTO)
         {
