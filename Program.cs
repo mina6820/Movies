@@ -16,6 +16,8 @@ using Movies.Authentication;
 using Microsoft.OpenApi.Models;
 using Movies.Repositories.MovieLikeRepo;
 using Movies.Repositories.SeriesLikeRepo;
+using Movies.Repositories.MovieCommentRepo;
+using Movies.Repositories.SeriesCommentRepo;
 
 namespace Movies
 {
@@ -46,6 +48,8 @@ namespace Movies
 
             builder.Services.AddScoped<IMovie_LikeRepo,MovieLikeRepository>();
             builder.Services.AddScoped<ISeries_LikeRepo,SeriesLikeRepo>();
+            builder.Services.AddScoped<IMovie_CommentRepo,MovieCommentRepository>();
+            builder.Services.AddScoped<ISeries_CommentRepo,SeriesCommentRepository>();
             // IHttpContextAccessor
          //   builder.Services.AddScoped<IHttpContextAccessor>();
 
