@@ -24,6 +24,7 @@ using Movies.Repositories.MovieLikeRepo;
 using Movies.Repositories.SeriesLikeRepo;
 
 using Movies.Repositories.FavSeriesRepo;
+using Movies.Repositories.SeriesCategoryRepo;
 
 
 namespace Movies
@@ -61,6 +62,8 @@ namespace Movies
 
             builder.Services.AddScoped<IMovie_LikeRepo,MovieLikeRepository>();
             builder.Services.AddScoped<ISeries_LikeRepo,SeriesLikeRepo>();
+
+            builder.Services.AddScoped<ISeriesCategoryRepository,SeriesCategoryRepository>();
             // IHttpContextAccessor
          //   builder.Services.AddScoped<IHttpContextAccessor>();
 
@@ -89,11 +92,24 @@ namespace Movies
                 };
             });
 
-    //        builder.Services.AddControllers()
-    //.AddJsonOptions(options =>
-    //{
-    //    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
-    //});
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                               .AllowAnyMethod()
+                               .AllowAnyHeader();
+                    });
+            });
+
+
+            //        builder.Services.AddControllers()
+            //.AddJsonOptions(options =>
+            //{
+            //    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+            //});
 
             /*-----------------------------Swagger PArt-----------------------------*/
             #region Swagger REgion
@@ -149,7 +165,7 @@ namespace Movies
             }
 
             app.UseAuthorization();
-
+            app.UseCors("AllowAllOrigins");
 
             app.MapControllers();
 

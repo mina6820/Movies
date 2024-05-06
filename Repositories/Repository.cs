@@ -1,4 +1,5 @@
-﻿using Movies.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Movies.Models;
 using TestingMVC.Repo;
 
 namespace Instagram_Clone.Repositories
@@ -23,7 +24,7 @@ namespace Instagram_Clone.Repositories
         
         }
 
-        public T GetById(int id)
+        public T GetById(int id )
         {
             return context.Set<T>().Find(id);
         }

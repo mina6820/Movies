@@ -24,48 +24,48 @@ namespace Movies.Controllers
             _seasonsRepo = seasonsRepo;
             this.directorRepository = directorRepository;
         }
-        [HttpGet]
-        public ActionResult<dynamic> GetAll()
-        {
-            List<Series> series=_seriesRepository.GetAll();
-            if(series == null)
-            {
-                return new GeneralResponse()
-                {
-                    IsSuccess = false,
-                    Data = "There is no data"
-                };
-            }
-            else
-            {
-                return new GeneralResponse()
-                {
-                    IsSuccess = true,
-                    Data = series
-                };
-            }
+        //[HttpGet]
+        //public ActionResult<dynamic> GetAll()
+        //{
+        //    List<Series> series=_seriesRepository.GetAll();
+        //    if(series == null)
+        //    {
+        //        return new GeneralResponse()
+        //        {
+        //            IsSuccess = false,
+        //            Data = "There is no data"
+        //        };
+        //    }
+        //    else
+        //    {
+        //        return new GeneralResponse()
+        //        {
+        //            IsSuccess = true,
+        //            Data = series
+        //        };
+        //    }
 
-        }
-        [HttpGet("{id:int}")]
-        public ActionResult<dynamic> GetSeriesById(int id)
-        {
-            Series series= _seriesRepository.GetById(id);
-            if(series == null) {
-                return new GeneralResponse()
-                {
-                    IsSuccess = false,
-                    Data = "There is no data"
-                };
-            }
-            else
-            {
-                return new GeneralResponse()
-                {
-                    IsSuccess = true,
-                    Data = series
-                };
-            }
-        }
+        //}
+        //[HttpGet("{id:int}")]
+        //public ActionResult<dynamic> GetSeriesById(int id)
+        //{
+        //    Series series= _seriesRepository.GetById(id);
+        //    if(series == null) {
+        //        return new GeneralResponse()
+        //        {
+        //            IsSuccess = false,
+        //            Data = "There is no data"
+        //        };
+        //    }
+        //    else
+        //    {
+        //        return new GeneralResponse()
+        //        {
+        //            IsSuccess = true,
+        //            Data = series
+        //        };
+        //    }
+        //}
         [HttpPost]
         public ActionResult<dynamic> AddSeries(SeriesDTO seriesDTO)
         {
@@ -82,15 +82,23 @@ namespace Movies.Controllers
                     LengthMinutes = seriesDTO.LengthMinutes,
                 };
 
+                Director director = directorRepository.GetById(seriesDTO.DirectorID);
+                if (director == null)
+                {
+                    return new GeneralResponse() { IsSuccess = true, Data = "Director Not Found" };
+                }
+
+
                 _seriesRepository.Insert(series);
                 _seriesRepository.Save();
 
+
                 // Retrieve director information
-                Director director = directorRepository.GetById(seriesDTO.DirectorID);
-                DirectorDTO directorDTO = new DirectorDTO
+              
+                DirectorInSeriesDTO directorInSeriesDTO  = new DirectorInSeriesDTO
                 {
                     Id = director.Id,
-                    Name = director.Name
+                    DirectorName = director.Name
                     // Populate other properties as needed
                 };
 
@@ -100,7 +108,7 @@ namespace Movies.Controllers
                     Data = new
                     {
                         Series = seriesDTO,
-                        Director = directorDTO
+                        Director = directorInSeriesDTO
                     }
                 };
             }
@@ -162,7 +170,7 @@ namespace Movies.Controllers
                 return new GeneralResponse()
                 {
                     IsSuccess = true,
-                    Data = series
+                    Data = "Edit Successfully"
                 };
             }
         }
