@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -31,6 +33,18 @@ namespace Movies.Controllers
         {
             if (ModelState.IsValid)
             {
+                var existingUserEmail = await userManager.FindByEmailAsync(userDto.Email);
+                if (existingUserEmail != null)
+                {
+                    return new GeneralResponse { IsSuccess = false, Data = "Email already exists" };
+                }
+
+                var existingUserName = await userManager.FindByNameAsync(userDto.YourFavirotePerson);
+                if (existingUserName != null)
+                {
+                    return new GeneralResponse { IsSuccess = false, Data = "UserName already exists" };
+                }
+
                 AppUser appuser = new AppUser()
                 {
                     FirstName = userDto.FirstName,
@@ -40,19 +54,21 @@ namespace Movies.Controllers
                     PasswordHash = userDto.Password,
                     YourFavirotePerson = userDto.YourFavirotePerson,
                 };
+
                 IdentityResult result =
                     await userManager.CreateAsync(appuser, userDto.Password);
+
                 if (result.Succeeded)
                 {
-                    return new GeneralResponse { IsSuccess = true, Data= "Account Created" };;
+                    //await userManager.AddToRoleAsync(appuser, "");
+                    return new GeneralResponse { IsSuccess = true, Data= "Account Created" };
+
                 }
                 return new GeneralResponse { IsSuccess = false, Data = result.Errors }; ;
 
-                //return BadRequest(result.Errors);
             }
             return new GeneralResponse { IsSuccess = false, Data = ModelState }; ;
 
-            //return BadRequest(ModelState);
         }
         [HttpPost("Login")]
         public async Task<ActionResult<dynamic>> Login(UserLoginDTO userDto)
@@ -102,25 +118,27 @@ namespace Movies.Controllers
                             }
                         };
 
-                        //return Ok(new
-                        //{
-                        //    token = new JwtSecurityTokenHandler().WriteToken(mytoken),
-                        //    expired = mytoken.ValidTo
-                        //});
                     }
                 }
                 return new GeneralResponse() { 
                     IsSuccess=false,
                     Data = Unauthorized("Invalid account")
             };
-                //return Unauthorized("Invalid account");
             }
             return new GeneralResponse()
             {
                 IsSuccess = false,
                 Data = ModelState
             };
-            //return BadRequest(ModelState);
+        }
+
+
+        [HttpPost("logout")]
+        [Authorize]
+        public async Task<ActionResult<GeneralResponse>> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return new GeneralResponse { IsSuccess = true, Data = "Logged out successfully" };
         }
 
     }
