@@ -60,7 +60,7 @@ namespace Movies.Controllers
 
                 if (result.Succeeded)
                 {
-                    //await userManager.AddToRoleAsync(appuser, "");
+                    await userManager.AddToRoleAsync(appuser, "User");
                     return new GeneralResponse { IsSuccess = true, Data= "Account Created" };
 
                 }

@@ -28,6 +28,8 @@ using Movies.Repositories.SeriesCommentRepo;
 using Movies.Repositories.FavSeriesRepo;
 using Movies.Repositories.SeriesCategoryRepo;
 using Movies.Repositories.ActorSeriesRepo;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity.UI;
 
 
 namespace Movies
@@ -79,7 +81,15 @@ namespace Movies
 
 
 
-            builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<Context>();
+            builder.Services.AddIdentity<AppUser, IdentityRole>
+                (options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<Context>();
+
+
+
+
+
+
 
             builder.Services.AddAuthentication(options => {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -113,6 +123,7 @@ namespace Movies
                                .AllowAnyHeader();
                     });
             });
+
 
 
 
@@ -167,6 +178,44 @@ namespace Movies
 
             /////////////////////////// Builder /////////////////////////////////////////////
             var app = builder.Build();
+
+
+            // Roles
+            // Access the built-in service provider
+            //using (var scope = app.Services.CreateScope())
+            //{
+            //    var services = scope.ServiceProvider;
+            //    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+            //    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+
+            //    // Create roles if they don't exist
+            //    if (!roleManager.RoleExistsAsync("Admin").Result)
+            //    {
+            //        roleManager.CreateAsync(new IdentityRole("Admin")).Wait();
+            //    }
+            //    if (!roleManager.RoleExistsAsync("User").Result)
+            //    {
+            //        roleManager.CreateAsync(new IdentityRole("User")).Wait();
+            //    }
+
+            //    // Create default admin user if it doesn't exist
+            //    var adminEmail = "admin@admin.com";
+            //    var adminUserName = "admin";
+            //    var defaultAdmin = userManager.FindByEmailAsync(adminEmail).Result;
+            //    if (defaultAdmin == null)
+            //    {
+            //        var adminUser = new AppUser
+            //        {
+            //            UserName = adminUserName,
+            //            Email = adminEmail,
+            //        };
+            //        var result = userManager.CreateAsync(adminUser, "Admin").Result;
+            //        if (result.Succeeded)
+            //        {
+            //            userManager.AddToRoleAsync(adminUser, "Admin").Wait();
+            //        }
+            //    }
+            //}
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
