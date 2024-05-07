@@ -25,6 +25,7 @@ using Movies.Repositories.SeriesLikeRepo;
 
 using Movies.Repositories.FavSeriesRepo;
 using Movies.Repositories.SeriesCategoryRepo;
+using Movies.Repositories.ActorSeriesRepo;
 
 
 namespace Movies
@@ -64,8 +65,10 @@ namespace Movies
             builder.Services.AddScoped<ISeries_LikeRepo,SeriesLikeRepo>();
 
             builder.Services.AddScoped<ISeriesCategoryRepository,SeriesCategoryRepository>();
+            builder.Services.AddScoped<IActorSeriesRepository, ActorSeriesRepository>();
+
             // IHttpContextAccessor
-         //   builder.Services.AddScoped<IHttpContextAccessor>();
+            //   builder.Services.AddScoped<IHttpContextAccessor>();
 
 
 
