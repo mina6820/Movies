@@ -30,6 +30,7 @@ using Movies.Repositories.SeriesCategoryRepo;
 using Movies.Repositories.ActorSeriesRepo;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity.UI;
+using Movies.Repositories.MovieRatingRepo;
 
 
 namespace Movies
@@ -74,6 +75,9 @@ namespace Movies
 
             builder.Services.AddScoped<ISeriesCategoryRepository,SeriesCategoryRepository>();
             builder.Services.AddScoped<IActorSeriesRepository, ActorSeriesRepository>();
+
+            builder.Services.AddScoped<IMovieRatingRepository, MovieRatingRepository>();
+
 
             // IHttpContextAccessor
             //   builder.Services.AddScoped<IHttpContextAccessor>();
