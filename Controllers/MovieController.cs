@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Movies.DTOs;
 using Movies.Models;
@@ -18,6 +19,7 @@ namespace Movies.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles ="Admin")]
         public ActionResult<GeneralResponse> AddMovie(AddMovieDTO movieDto)
         {
             if(ModelState.IsValid)
@@ -106,6 +108,7 @@ namespace Movies.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Admin")]
         public ActionResult<GeneralResponse> EditMovie(int id, AddMovieDTO MovieDTO)
         {
             Movie movieDb = movieRepository.GetMovieById(id);
@@ -126,6 +129,7 @@ namespace Movies.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
         public ActionResult<GeneralResponse> DeleteMovie(int id)
         {
             Movie movieDb = movieRepository.GetMovieById(id);

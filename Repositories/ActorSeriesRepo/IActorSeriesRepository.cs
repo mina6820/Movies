@@ -7,6 +7,11 @@ namespace Movies.Repositories.ActorSeriesRepo
     {
         public bool GetActorAndSeries(int ActorId, int SeriesId);
         public bool IsActorInSeries(int ActorId, int SeriesId);
+        public bool DeleteActorFromSeries(int ActorId, int SeriesId);
+
+        public ActorSeries GetActorSeries(int ActorId, int SeriesId);
+        public List<Actor> GetActors(int SeriesId);
+        public List<Series> GetSeriesOfActor(int ActorId);
 
     }
 }

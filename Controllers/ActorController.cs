@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Movies.DTOs.ActorDTOs;
 using Movies.Models;
 using Movies.Repositories.ActroRepo;
+using Movies.Repositories.MovieRatingRepo;
 using System.IO;
 
 namespace Movies.Controllers
@@ -200,5 +201,8 @@ namespace Movies.Controllers
                 return new GeneralResponse() { IsSuccess = true, Data = actorForAddDTO };
             }
         }
+
+
+
     }
 }
