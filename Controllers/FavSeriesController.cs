@@ -54,7 +54,7 @@ namespace Movies.Controllers
 
         }
 
-        [HttpGet("{SeriesID}")]
+        [HttpGet("series/{SeriesID}")]
         [Authorize]
         public ActionResult<dynamic> IsFavorite(int SeriesID)
         {
