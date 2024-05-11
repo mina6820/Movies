@@ -12,6 +12,8 @@ namespace Movies.Models
         public int LengthMinutes { get; set; }
         public bool IsDeleted { get; set; } = false;
         public int Revenue { get; set; }
+
+        public int? rating { get; set; }
         public List<Season>? Seasons { get; set; }
         // Enum For (Anime, Arabic, Forigen, Assian...)
         [Column(TypeName = "nvarchar(20)")]

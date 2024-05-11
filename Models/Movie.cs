@@ -9,6 +9,9 @@ namespace Movies.Models
         public string? Description { get; set; }
         public int? CreatedYear { get; set; }
         public string? PosterImage { get; set; }
+
+        public int? rating { get; set; }
+
         public int LengthMinutes { get; set; }
         public bool IsDeleted { get; set; } = false;
         public int Revenue { get; set; }
