@@ -93,14 +93,15 @@ namespace Movies.Controllers
                 Movies = director.Movies.Select(m => new MoviesDirectorDTO
                 {
                     Title = m.Title,
-                    Id = m.Id
+                    Id = m.Id,
+                    PosterImage=m.PosterImage
                 }).ToList(),
 
                 Series = director.Series.Select(s => new SeriesDirectorDTO
                 {
                     Id = s.Id,
-                    Title = s.Title
-
+                    Title = s.Title,
+                    PosterImage = s.PosterImage
                 }).ToList()
 
             };
@@ -177,8 +178,8 @@ namespace Movies.Controllers
                     Movies = director.Movies.Select(m => new MoviesDirectorDTO
                     {
                         Title = m.Title,
-
-                        Id = m.Id
+                        Id = m.Id,
+                        PosterImage = m.PosterImage
 
 
                     }).ToList(),
@@ -186,7 +187,8 @@ namespace Movies.Controllers
                     Series = director.Series.Select(s => new SeriesDirectorDTO
                     {
                         Id = s.Id,
-                        Title = s.Title
+                        Title = s.Title,
+                        PosterImage = s.PosterImage
                     }).ToList()
 
                 };

@@ -19,6 +19,7 @@ namespace Movies.Controllers
             ActorRepository = _ActorRepository;
         }
 
+        [Authorize]
         [HttpPost]
         public ActionResult<dynamic> AddActor(ActorForAddDTO actorForAddDTO)
         {
@@ -149,7 +150,7 @@ namespace Movies.Controllers
 
         }
 
-
+        [Authorize]
         [HttpDelete]
         [Route("{id}")]
         public ActionResult<dynamic> DeleteActor(int id)
@@ -174,7 +175,7 @@ namespace Movies.Controllers
            
         }
 
-
+        [Authorize]
         [HttpPut]
         [Route("{id}")]
         public ActionResult<dynamic> EditActor(int id,ActorForAddDTO actorForAddDTO)
